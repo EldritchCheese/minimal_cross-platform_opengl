@@ -7,10 +7,6 @@ Import('env')
 
 env.Append(RPATH=[Literal('\\$$ORIGIN')])
 env.Append(CPPPATH=['include'])
-env.Append(LIBPATH=['bin'])
-
-exe_reqs = []
-
 
 # GLEW
 glew = env.Command(
@@ -34,9 +30,8 @@ env.Append(CPPPATH=['ext_libs/glfw-3.0.4/include'])
 env.Append(LIBS=['$OPENGL'])
 
 # GLM
-# env.Append(LIBS=['glm'])
+env.Append(CPPPATH=['$BASEDIR/ext_libs/glm-0.9.5.3'])
 
 exe = env.Program(['Program.cc',Glob('src/*.cc'),glfw,glew])
-env.Requires(exe,exe_reqs)
-env.Install('bin',exe)
-
+env.Install('dist',exe)
+env.Install('dist/shaders',['shaders/simple.vertex','shaders/simple.fragment'])
