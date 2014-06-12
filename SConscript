@@ -31,7 +31,8 @@ env.Append(LIBS=['$OPENGL'])
 
 # GLM
 env.Append(CPPPATH=['$BASEDIR/ext_libs/glm-0.9.5.3'])
+env.Append(CCFLAGS=['-DGLM_FORCE_RADIANS'])
 
 exe = env.Program(['Program.cc',Glob('src/*.cc'),glfw,glew])
 env.Install('dist',exe)
-env.Install('dist/shaders',['shaders/simple.vertex','shaders/simple.fragment'])
+env.Install('dist/resources',Glob('resources/*'))
