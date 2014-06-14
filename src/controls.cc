@@ -1,9 +1,5 @@
 #include "controls.hh"
 
-#include <GLFW/glfw3.h>
-extern GLFWwindow* window;
-
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 glm::mat4 viewMatrix;
@@ -24,7 +20,7 @@ float initialFoV = 45.0f * (3.14159f/180.0f);
 float speed = 3.0f;
 float mouseSpeed = 0.005f;
 
-void computeMatricesFromInputs(){
+void computeMatricesFromInputs(GLFWwindow* window){
   static double lastTime = glfwGetTime();
 
   double currentTime = glfwGetTime();

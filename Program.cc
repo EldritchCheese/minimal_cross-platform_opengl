@@ -1,6 +1,8 @@
 #include <iostream>
 using std::cout;
 using std::endl;
+#include <vector>
+using std::vector;
 
 
 #include <GL/glew.h>
@@ -11,8 +13,9 @@ using std::endl;
 #include "shader.hh"
 #include "texture.hh"
 #include "controls.hh"
-
-GLFWwindow* window;
+#include "objloader.hh"
+#include "vboindexer.hh"
+#include "text2D.hh"
 
 int main(){
   cout << "Starting" << endl;
@@ -27,7 +30,7 @@ int main(){
   // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
   // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  window = glfwCreateWindow(800,600,"First Window",NULL,NULL);
+  GLFWwindow* window = glfwCreateWindow(800,600,"First Window",NULL,NULL);
   if(!window){
     cout << "Couldn't open GLFW window" << endl;
     glfwTerminate();
@@ -49,119 +52,95 @@ int main(){
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glEnable(GL_CULL_FACE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   GLuint VertexArrayID;
   glGenVertexArrays(1,&VertexArrayID);
   glBindVertexArray(VertexArrayID);
 
-  GLuint programID = LoadShaders("resources/texture_330.vertex","resources/texture_330.fragment");
-  GLuint matrixID = glGetUniformLocation(programID,"MVP");
+  GLuint programID = LoadShaders("resources/standard_330.vertex","resources/standard_330.fragment");
 
-  GLuint texture = loadDDS("resources/uvtemplate.DDS");
+  GLuint matrixID = glGetUniformLocation(programID,"MVP");
+  GLuint viewMatrixID = glGetUniformLocation(programID,"V");
+  GLuint modelMatrixID = glGetUniformLocation(programID,"M");
+
+  GLuint texture = loadDDS("resources/suzanne.DDS");
   GLuint textureID = glGetUniformLocation(programID,"textureSampler");
 
-  static const GLfloat g_vertex_buffer_data[] = {
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
-  };
+  vector<glm::vec3> vertices;
+  vector<glm::vec2> uvs;
+  vector<glm::vec3> normals;
+  bool res = loadOBJ("resources/suzanne.obj",vertices,uvs,normals);
 
-  // Two UV coordinatesfor each vertex. They were created withe Blender.
-  static const GLfloat g_uv_buffer_data[] = {
-    0.000059f, 1.0f-0.000004f,
-    0.000103f, 1.0f-0.336048f,
-    0.335973f, 1.0f-0.335903f,
-    1.000023f, 1.0f-0.000013f,
-    0.667979f, 1.0f-0.335851f,
-    0.999958f, 1.0f-0.336064f,
-    0.667979f, 1.0f-0.335851f,
-    0.336024f, 1.0f-0.671877f,
-    0.667969f, 1.0f-0.671889f,
-    1.000023f, 1.0f-0.000013f,
-    0.668104f, 1.0f-0.000013f,
-    0.667979f, 1.0f-0.335851f,
-    0.000059f, 1.0f-0.000004f,
-    0.335973f, 1.0f-0.335903f,
-    0.336098f, 1.0f-0.000071f,
-    0.667979f, 1.0f-0.335851f,
-    0.335973f, 1.0f-0.335903f,
-    0.336024f, 1.0f-0.671877f,
-    1.000004f, 1.0f-0.671847f,
-    0.999958f, 1.0f-0.336064f,
-    0.667979f, 1.0f-0.335851f,
-    0.668104f, 1.0f-0.000013f,
-    0.335973f, 1.0f-0.335903f,
-    0.667979f, 1.0f-0.335851f,
-    0.335973f, 1.0f-0.335903f,
-    0.668104f, 1.0f-0.000013f,
-    0.336098f, 1.0f-0.000071f,
-    0.000103f, 1.0f-0.336048f,
-    0.000004f, 1.0f-0.671870f,
-    0.336024f, 1.0f-0.671877f,
-    0.000103f, 1.0f-0.336048f,
-    0.336024f, 1.0f-0.671877f,
-    0.335973f, 1.0f-0.335903f,
-    0.667969f, 1.0f-0.671889f,
-    1.000004f, 1.0f-0.671847f,
-    0.667979f, 1.0f-0.335851f
-  };
+  vector<unsigned short> indices;
+  vector<glm::vec3> indexed_vertices;
+  vector<glm::vec2> indexed_uvs;
+  vector<glm::vec3> indexed_normals;
+  indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
 
   GLuint vertexbuffer;
   glGenBuffers(1,&vertexbuffer);
   glBindBuffer(GL_ARRAY_BUFFER,vertexbuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data),g_vertex_buffer_data, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size()*sizeof(glm::vec3),&indexed_vertices[0], GL_STATIC_DRAW);
 
   GLuint uvbuffer;
   glGenBuffers(1, &uvbuffer);
   glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size()*sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);
 
+  GLuint normalbuffer;
+  glGenBuffers(1,&normalbuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+  glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
+
+  GLuint elementbuffer;
+  glGenBuffers(1, &elementbuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
+
+  glUseProgram(programID);
+  GLuint lightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+
+  initText2D("resources/Holstein.DDS");
+
+  double lastTime = glfwGetTime();
+  int nbFrames = 0;
+  double ms_per_frame = 0;
 
   do{
+
+    double currentTime = glfwGetTime();
+    nbFrames++;
+    if(currentTime - lastTime >= 1.0){
+      ms_per_frame = 1000.0/double(nbFrames);
+      printf("%f ms/frame\n", ms_per_frame);
+      nbFrames = 0;
+      lastTime = glfwGetTime();
+    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(programID);
 
-    computeMatricesFromInputs();
+    computeMatricesFromInputs(window);
     glm::mat4 projection = getProjectionMatrix();
     glm::mat4 view = getViewMatrix();
-    glm::mat4 model = glm::mat4(1.0);
+    glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),3.14159f/2.0f,glm::vec3(1,0,0));
+    glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),-3.14159f/2.0f,glm::vec3(0,0,1));
+    glm::mat4 model = rotateZ * rotateX;
     glm::mat4 mvp = projection * view * model;
 
     glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &model[0][0]);
+    glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &view[0][0]);
+
+    double time = glfwGetTime();
+    double theta = 2*3.14159*time/(3.0);
+    glm::vec3 lightPos = glm::vec3(4*cos(theta),4*sin(theta),4);
+    glUniform3f(lightID, lightPos.x, lightPos.y, lightPos.z);
+
+    // Draw first object
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -175,9 +154,47 @@ int main(){
     glBindBuffer(GL_ARRAY_BUFFER,uvbuffer);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    glDrawArrays(GL_TRIANGLES,0,12*3);
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER,normalbuffer);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0 );
+
+    // Draw second object
+
+    model = glm::translate(model, glm::vec3(2.5,0,0));
+    mvp = projection * view * model;
+
+    glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &model[0][0]);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glUniform1i(textureID, 0);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER,vertexbuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER,uvbuffer);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER,normalbuffer);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0 );
+
+    // Clean up
+
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+
+    char text[256];
+    sprintf(text, "%.2f ms/frame", ms_per_frame );
+    printText2D(text, 10, 500, 60);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -185,6 +202,8 @@ int main(){
 
   glDeleteBuffers(1,&vertexbuffer);
   glDeleteBuffers(1,&uvbuffer);
+  glDeleteBuffers(1, &normalbuffer);
+  glDeleteBuffers(1, &elementbuffer);
   glDeleteProgram(programID);
   glDeleteTextures(1, &textureID);
   glDeleteVertexArrays(1, &VertexArrayID);
