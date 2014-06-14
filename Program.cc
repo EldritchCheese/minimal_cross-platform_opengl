@@ -10,12 +10,15 @@ using std::vector;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "shader.hh"
 #include "texture.hh"
 #include "controls.hh"
 #include "objloader.hh"
 #include "vboindexer.hh"
 #include "text2D.hh"
+
+#include "NGWindow.hh"
+#include "NGShader.hh"
+#include "NGVertex.hh"
 
 int main(){
   cout << "Starting" << endl;
@@ -30,23 +33,17 @@ int main(){
   // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
   // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* window = glfwCreateWindow(800,600,"First Window",NULL,NULL);
-  if(!window){
-    cout << "Couldn't open GLFW window" << endl;
-    glfwTerminate();
-    return -1;
-  }
-  glfwMakeContextCurrent(window);
-
+  NG::Window window(800, 600, "Window Class");
+  window.Activate();
 
   glewExperimental = true;
   if(glewInit() != GLEW_OK){
     cout << "Coudn't initialize GLEW" << endl;
     return -1;
   }
-  glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-  glfwSetCursorPos(window, 800/2, 600/2);
+  window.SetInputMode(GLFW_STICKY_KEYS, GL_TRUE);
+  window.SetInputMode(GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+  window.CenterCursor();
 
   glClearColor(0.0, 0.0, 0.4, 0.0);
   glEnable(GL_DEPTH_TEST);
@@ -59,14 +56,14 @@ int main(){
   glGenVertexArrays(1,&VertexArrayID);
   glBindVertexArray(VertexArrayID);
 
-  GLuint programID = LoadShaders("resources/standard_330.vertex","resources/standard_330.fragment");
+  NG::ShaderProgram standard_shading("resources/standard_330.vertex","resources/standard_330.fragment");
 
-  GLuint matrixID = glGetUniformLocation(programID,"MVP");
-  GLuint viewMatrixID = glGetUniformLocation(programID,"V");
-  GLuint modelMatrixID = glGetUniformLocation(programID,"M");
+  GLuint matrixID = glGetUniformLocation(standard_shading.m_id,"MVP");
+  GLuint viewMatrixID = glGetUniformLocation(standard_shading.m_id,"V");
+  GLuint modelMatrixID = glGetUniformLocation(standard_shading.m_id,"M");
 
   GLuint texture = loadDDS("resources/suzanne.DDS");
-  GLuint textureID = glGetUniformLocation(programID,"textureSampler");
+  GLuint textureID = glGetUniformLocation(standard_shading.m_id,"textureSampler");
 
   vector<glm::vec3> vertices;
   vector<glm::vec2> uvs;
@@ -99,8 +96,8 @@ int main(){
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
 
-  glUseProgram(programID);
-  GLuint lightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+  standard_shading.Activate();
+  GLuint lightID = glGetUniformLocation(standard_shading.m_id, "LightPosition_worldspace");
 
   initText2D("resources/Holstein.DDS");
 
@@ -121,7 +118,7 @@ int main(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(programID);
+    standard_shading.Activate();
 
     computeMatricesFromInputs(window);
     glm::mat4 projection = getProjectionMatrix();
@@ -196,15 +193,14 @@ int main(){
     sprintf(text, "%.2f ms/frame", ms_per_frame );
     printText2D(text, 10, 500, 60);
 
-    glfwSwapBuffers(window);
+    window.SwapBuffers();
     glfwPollEvents();
-  } while (glfwGetKey(window,GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window)==0);
+  } while (!window.IsKeyPressed(GLFW_KEY_ESCAPE) && !window.ShouldClose());
 
   glDeleteBuffers(1,&vertexbuffer);
   glDeleteBuffers(1,&uvbuffer);
   glDeleteBuffers(1, &normalbuffer);
   glDeleteBuffers(1, &elementbuffer);
-  glDeleteProgram(programID);
   glDeleteTextures(1, &textureID);
   glDeleteVertexArrays(1, &VertexArrayID);
 

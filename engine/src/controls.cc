@@ -20,18 +20,17 @@ float initialFoV = 45.0f * (3.14159f/180.0f);
 float speed = 3.0f;
 float mouseSpeed = 0.005f;
 
-void computeMatricesFromInputs(GLFWwindow* window){
+void computeMatricesFromInputs(NG::Window& window){
   static double lastTime = glfwGetTime();
 
   double currentTime = glfwGetTime();
   float deltaTime = float(currentTime - lastTime);
 
-  double xpos, ypos;
-  glfwGetCursorPos(window, &xpos, &ypos);
-  glfwSetCursorPos(window, 800/2, 600/2);
+  auto cursor = window.GetCursorPos() - window.GetCenter();
+  window.CenterCursor();
 
-  phi   -= mouseSpeed * float(xpos - 800/2);
-  theta += mouseSpeed * float(ypos - 600/2);
+  phi   -= mouseSpeed * float(cursor.x);
+  theta += mouseSpeed * float(cursor.y);
   if(theta<0){
     theta = 0;
   } else if (theta>3.14f){
@@ -46,22 +45,22 @@ void computeMatricesFromInputs(GLFWwindow* window){
 
   glm::vec3 z(0,0,1);
 
-  if(glfwGetKey(window, GLFW_KEY_W)==GLFW_PRESS){
+  if(window.IsKeyPressed(GLFW_KEY_W)){
     position += direction * deltaTime * speed;
   }
-  if(glfwGetKey(window, GLFW_KEY_S)==GLFW_PRESS){
+  if(window.IsKeyPressed(GLFW_KEY_S)){
     position -= direction * deltaTime * speed;
   }
-  if(glfwGetKey(window, GLFW_KEY_A)==GLFW_PRESS){
+  if(window.IsKeyPressed(GLFW_KEY_A)){
     position -= right * deltaTime * speed;
   }
-  if(glfwGetKey(window, GLFW_KEY_D)==GLFW_PRESS){
+  if(window.IsKeyPressed(GLFW_KEY_D)){
     position += right * deltaTime * speed;
   }
-  if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS){
+  if(window.IsKeyPressed(GLFW_KEY_LEFT_SHIFT)){
     position += z * deltaTime * speed;
   }
-  if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS){
+  if(window.IsKeyPressed(GLFW_KEY_LEFT_CONTROL)){
     position -= z * deltaTime * speed;
   }
 

@@ -1,0 +1,8 @@
+#ifndef _NGVERTEX_H_
+#define _NGVERTEX_H_
+
+namespace NG{
+  struct Vertex
+}
+
+#endif /* _NGVERTEX_H_ */

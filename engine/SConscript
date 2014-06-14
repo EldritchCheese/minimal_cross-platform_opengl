@@ -1,0 +1,7 @@
+# -*- python -*-
+
+Import('env')
+
+lib = env.Library(Glob('src/*.cc'))
+
+Return('lib')
