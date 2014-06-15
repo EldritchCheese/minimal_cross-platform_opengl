@@ -41,6 +41,33 @@ void NG::ShaderProgram::Activate(){
   glUseProgram(m_id);
 }
 
+GLuint NG::ShaderProgram::GetUniformLocation(const char* name){
+  try{
+    return m_uniform_locations.at(name);
+  } catch (std::out_of_range e){
+    GLuint location = glGetUniformLocation(m_id,name);
+    m_uniform_locations[name] = location;
+    return location;
+  }
+}
+
+
+void NG::ShaderProgram::LoadUniform(const char* name, glm::mat4& mat){
+  glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]);
+}
+
+void NG::ShaderProgram::LoadUniform(const char* name, glm::vec3& vec){
+  LoadUniform(name, vec.x, vec.y, vec.z);
+}
+
+void NG::ShaderProgram::LoadUniform(const char* name, double x, double y, double z){
+  glUniform3f(GetUniformLocation(name), x, y, z);
+}
+
+void NG::ShaderProgram::LoadUniform(const char* name, GLuint val){
+  glUniform1i(GetUniformLocation(name), val);
+}
+
 NG::Shader::Shader(const char* file_path, GLuint shader_type){
   // Read from file
   std::ifstream fileStream(file_path, std::ios::in);

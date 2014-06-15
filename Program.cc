@@ -56,17 +56,9 @@ int main(){
 
   NG::ShaderProgram standard_shading("resources/standard_330.vertex","resources/standard_330.fragment");
 
-  GLuint matrixID = glGetUniformLocation(standard_shading.m_id,"MVP");
-  GLuint viewMatrixID = glGetUniformLocation(standard_shading.m_id,"V");
-  GLuint modelMatrixID = glGetUniformLocation(standard_shading.m_id,"M");
-
   GLuint texture = loadDDS("resources/suzanne.DDS");
-  GLuint textureID = glGetUniformLocation(standard_shading.m_id,"textureSampler");
 
   NG::VBO suzanne("resources/suzanne.obj");
-
-  standard_shading.Activate();
-  GLuint lightID = glGetUniformLocation(standard_shading.m_id, "LightPosition_worldspace");
 
   initText2D("resources/Holstein.DDS");
 
@@ -97,20 +89,21 @@ int main(){
     glm::mat4 model = rotateZ * rotateX;
     glm::mat4 mvp = projection * view * model;
 
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
-    glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &model[0][0]);
-    glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &view[0][0]);
+    standard_shading.LoadUniform("MVP",mvp);
+    standard_shading.LoadUniform("M",model);
+    standard_shading.LoadUniform("V",view);
+
 
     double time = glfwGetTime();
     double theta = 2*3.14159*time/(3.0);
     glm::vec3 lightPos = glm::vec3(4*cos(theta),4*sin(theta),4);
-    glUniform3f(lightID, lightPos.x, lightPos.y, lightPos.z);
+    standard_shading.LoadUniform("LightPosition_worldspace",lightPos);
 
     // Draw first object
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glUniform1i(textureID, 0);
+    standard_shading.LoadUniform("textureSampler", 0);
 
     suzanne.Draw();
 
@@ -119,12 +112,12 @@ int main(){
     model = glm::translate(model, glm::vec3(2.5,0,0));
     mvp = projection * view * model;
 
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
-    glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &model[0][0]);
+    standard_shading.LoadUniform("MVP",mvp);
+    standard_shading.LoadUniform("M",model);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glUniform1i(textureID, 0);
+    standard_shading.LoadUniform("textureSampler", 0);
 
     suzanne.Draw();
 
@@ -142,11 +135,7 @@ int main(){
     glfwPollEvents();
   } while (!window.IsKeyPressed(GLFW_KEY_ESCAPE) && !window.ShouldClose());
 
-  // glDeleteBuffers(1,&vertexbuffer);
-  // glDeleteBuffers(1,&uvbuffer);
-  // glDeleteBuffers(1, &normalbuffer);
-  // glDeleteBuffers(1, &elementbuffer);
-  glDeleteTextures(1, &textureID);
+  //glDeleteTextures(1, &textureID);
   glDeleteVertexArrays(1, &VertexArrayID);
 
   glfwTerminate();
