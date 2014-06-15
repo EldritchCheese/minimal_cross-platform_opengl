@@ -2,15 +2,25 @@
 
 #include <stdexcept>
 
-#include <GLFW/glfw3.h>
+static std::weak_ptr<NG::GLFW> s_glfw;
+static std::weak_ptr<NG::GLEW> s_glew;
 
 NG::Window::Window(int width, int height, const char* name, GLFWmonitor* monitor, GLFWwindow* share){
+  if(!s_glfw.lock()){
+    s_glfw = m_glfw = std::make_shared<NG::GLFW>();
+  }
+
   m_width = width;
   m_height = height;
   m_name = name;
   m_window = glfwCreateWindow(m_width, m_height, m_name, monitor, share);
   if(m_window==NULL){
     throw std::runtime_error("Could not make glfw window");
+  }
+
+  if(!s_glew.lock()){
+    Activate();
+    s_glew = m_glew = std::make_shared<NG::GLEW>();
   }
 }
 

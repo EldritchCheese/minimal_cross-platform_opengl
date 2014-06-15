@@ -1,8 +1,7 @@
 #ifndef _NG_TEXTURE_H_
 #define _NG_TEXTURE_H_
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "NG_GL.hh"
 
 namespace NG {
   class Texture{

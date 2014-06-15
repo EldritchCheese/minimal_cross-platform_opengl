@@ -2,6 +2,6 @@
 
 Import('env')
 
-lib = env.Library(Glob('src/*.cc'))
+lib = env.Library('NGine',Glob('src/*.cc'))
 
 Return('lib')

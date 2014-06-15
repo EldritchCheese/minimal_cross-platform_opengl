@@ -5,13 +5,12 @@ using std::endl;
 using std::vector;
 
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "controls.hh"
 
+#include "NG_GL.hh"
 #include "NG_Window.hh"
 #include "NG_Shader.hh"
 #include "NG_VBO.hh"
@@ -21,24 +20,9 @@ using std::vector;
 int main(){
   cout << "Starting" << endl;
 
-  if(!glfwInit()){
-    cout << "Failed to initialize GLFW" << endl;
-    return -1;
-  }
-
-  // glfwWindowHint(GLFW_SAMPLES,4);
-  // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
-  // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
-  // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
   NG::Window window(800, 600, "Window Class");
   window.Activate();
 
-  glewExperimental = true;
-  if(glewInit() != GLEW_OK){
-    cout << "Coudn't initialize GLEW" << endl;
-    return -1;
-  }
   window.SetInputMode(GLFW_STICKY_KEYS, GL_TRUE);
   window.SetInputMode(GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
   window.CenterCursor();
@@ -47,19 +31,10 @@ int main(){
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glEnable(GL_CULL_FACE);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  GLuint VertexArrayID;
-  glGenVertexArrays(1,&VertexArrayID);
-  glBindVertexArray(VertexArrayID);
 
   NG::ShaderProgram standard_shading("resources/standard_330.vertex","resources/standard_330.fragment");
-
   NG::Texture suzanne_texture("resources/suzanne.DDS");
-
-  NG::VBO suzanne("resources/suzanne.obj");
-
+  NG::VBO suzanne_vbo("resources/suzanne.obj");
   NG::Text2D text_overlay("resources/text_330.vertex","resources/text_330.fragment","resources/Holstein.DDS");
 
   double lastTime = glfwGetTime();
@@ -104,7 +79,7 @@ int main(){
     suzanne_texture.Activate(GL_TEXTURE0);
     standard_shading.LoadUniform("textureSampler", 0);
 
-    suzanne.Draw();
+    suzanne_vbo.Draw();
 
     // Draw second object
 
@@ -117,13 +92,9 @@ int main(){
     suzanne_texture.Activate(GL_TEXTURE0);
     standard_shading.LoadUniform("textureSampler", 0);
 
-    suzanne.Draw();
+    suzanne_vbo.Draw();
 
-    // Clean up
-
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
+    //Text overlay
 
     char text[256];
     sprintf(text, "%.2f ms/frame", ms_per_frame );
@@ -132,11 +103,6 @@ int main(){
     window.SwapBuffers();
     glfwPollEvents();
   } while (!window.IsKeyPressed(GLFW_KEY_ESCAPE) && !window.ShouldClose());
-
-  //glDeleteTextures(1, &textureID);
-  glDeleteVertexArrays(1, &VertexArrayID);
-
-  glfwTerminate();
 
   cout << "Exiting" << endl;
 }

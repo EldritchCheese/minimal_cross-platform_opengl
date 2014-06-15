@@ -1,11 +1,9 @@
 #ifndef _NG_TEXT2D_H_
 #define _NG_TEXT2D_H_
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #include "NG_Shader.hh"
 #include "NG_Texture.hh"
+#include "NG_GL.hh"
 
 namespace NG {
   class Text2D {

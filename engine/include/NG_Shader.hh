@@ -4,8 +4,9 @@
 #include <map>
 #include <string>
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
+
+#include "NG_GL.hh"
 
 namespace NG{
   class ShaderProgram{

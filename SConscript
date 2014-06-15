@@ -37,6 +37,6 @@ env.Append(CCFLAGS=['-DGLM_FORCE_RADIANS'])
 env.Append(CPPPATH=['$BASEDIR/engine/include'])
 libEngine = env.SConscript('engine/SConscript',exports=['env'])
 
-exe = env.Program(['Program.cc',Glob('src/*.cc'),glfw,glew,libEngine])
+exe = env.Program(['Program.cc',Glob('src/*.cc'),libEngine,glfw,glew])
 env.Install('dist',exe)
 env.Install('dist/resources',Glob('resources/*'))

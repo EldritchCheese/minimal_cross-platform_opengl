@@ -1,9 +1,11 @@
 #ifndef _NGWINDOW_H_
 #define _NGWINDOW_H_
 
+#include <memory>
+
 #include <glm/glm.hpp>
-class GLFWwindow;
-class GLFWmonitor;
+
+#include "NG_GL.hh"
 
 namespace NG{
   class Window{
@@ -28,6 +30,9 @@ namespace NG{
     int m_height;
     const char* m_name;
     GLFWwindow* m_window;
+
+    std::shared_ptr<NG::GLFW> m_glfw;
+    std::shared_ptr<NG::GLEW> m_glew;
   };
 }
 
