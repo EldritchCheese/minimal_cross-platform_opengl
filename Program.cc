@@ -10,13 +10,13 @@ using std::vector;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "texture.hh"
 #include "controls.hh"
-#include "text2D.hh"
 
 #include "NG_Window.hh"
 #include "NG_Shader.hh"
 #include "NG_VBO.hh"
+#include "NG_Texture.hh"
+#include "NG_Text2D.hh"
 
 int main(){
   cout << "Starting" << endl;
@@ -56,11 +56,11 @@ int main(){
 
   NG::ShaderProgram standard_shading("resources/standard_330.vertex","resources/standard_330.fragment");
 
-  GLuint texture = loadDDS("resources/suzanne.DDS");
+  NG::Texture suzanne_texture("resources/suzanne.DDS");
 
   NG::VBO suzanne("resources/suzanne.obj");
 
-  initText2D("resources/Holstein.DDS");
+  NG::Text2D text_overlay("resources/text_330.vertex","resources/text_330.fragment","resources/Holstein.DDS");
 
   double lastTime = glfwGetTime();
   int nbFrames = 0;
@@ -101,8 +101,7 @@ int main(){
 
     // Draw first object
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    suzanne_texture.Activate(GL_TEXTURE0);
     standard_shading.LoadUniform("textureSampler", 0);
 
     suzanne.Draw();
@@ -115,8 +114,7 @@ int main(){
     standard_shading.LoadUniform("MVP",mvp);
     standard_shading.LoadUniform("M",model);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    suzanne_texture.Activate(GL_TEXTURE0);
     standard_shading.LoadUniform("textureSampler", 0);
 
     suzanne.Draw();
@@ -129,7 +127,7 @@ int main(){
 
     char text[256];
     sprintf(text, "%.2f ms/frame", ms_per_frame );
-    printText2D(text, 10, 500, 60);
+    text_overlay.Draw(text, 10, 500, 60);
 
     window.SwapBuffers();
     glfwPollEvents();

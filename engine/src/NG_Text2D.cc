@@ -1,38 +1,27 @@
-#include "text2D.hh"
+#include "NG_Text2D.hh"
 
+#include <cstring>
 #include <vector>
 using std::vector;
-#include <cstring>
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
-#include "texture.hh"
-#include "NG_Shader.hh"
+NG::Text2D::Text2D(const char* vertex_shader_path, const char* fragment_shader_path, const char* texture_path) :
+  m_shader(vertex_shader_path, fragment_shader_path), m_texture(texture_path) {
 
-unsigned int text2DtextureID;
-unsigned int text2DvertexBufferID;
-unsigned int text2DuvBufferID;
-unsigned int text2DuniformID;
-
-NG::ShaderProgram* text_shading;
-
-void initText2D(const char* texturePath){
-  text_shading = new NG::ShaderProgram("resources/text_330.vertex","resources/text_330.fragment");
-
-
-  text2DtextureID = loadDDS(texturePath);
-
-  glGenBuffers(1, &text2DvertexBufferID);
-  glGenBuffers(1, &text2DuvBufferID);
-  text2DuniformID = glGetUniformLocation(text_shading->m_id, "textureSampler");
-
+  glGenBuffers(1, &m_vertexbuffer);
+  glGenBuffers(1, &m_uvbuffer);
 }
 
-void printText2D(const char* text, int x, int y, int size){
+NG::Text2D::~Text2D(){
+  glDeleteBuffers(1, &m_vertexbuffer);
+  glDeleteBuffers(1, &m_uvbuffer);
+}
+
+void NG::Text2D::Draw(const char* text, int x, int y, int size){
   unsigned int length = strlen(text);
 
+  // Generate letter locations
   vector<glm::vec2> vertices;
   vector<glm::vec2> UVs;
   for(unsigned int i=0; i<length; i++){
@@ -63,26 +52,25 @@ void printText2D(const char* text, int x, int y, int size){
     UVs.push_back(uv_up_right);
     vertices.push_back(vertex_down_left);
     UVs.push_back(uv_down_left);
-
   }
 
-  glBindBuffer(GL_ARRAY_BUFFER, text2DvertexBufferID);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
   glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(glm::vec2), &vertices[0], GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, text2DuvBufferID);
+  glBindBuffer(GL_ARRAY_BUFFER, m_uvbuffer);
   glBufferData(GL_ARRAY_BUFFER, UVs.size()*sizeof(glm::vec2), &UVs[0], GL_STATIC_DRAW);
 
-  text_shading->Activate();
+  m_shader.Activate();
 
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, text2DtextureID);
-  glUniform1i(text2DuniformID,0);
+  m_texture.Activate(GL_TEXTURE0);
+  m_shader.LoadUniform("textureSampler", 0);
 
   glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, text2DvertexBufferID);
+  glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0 );
 
   glEnableVertexAttribArray(1);
-  glBindBuffer(GL_ARRAY_BUFFER, text2DuvBufferID);
+  glBindBuffer(GL_ARRAY_BUFFER, m_uvbuffer);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
   glEnable(GL_BLEND);
@@ -94,10 +82,4 @@ void printText2D(const char* text, int x, int y, int size){
 
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
-}
-
-void cleanupText2D(){
-  glDeleteBuffers(1, &text2DvertexBufferID);
-  glDeleteBuffers(1, &text2DuvBufferID);
-  glDeleteTextures(1, &text2DtextureID);
 }
