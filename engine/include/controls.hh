@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
-#include "NGWindow.hh"
+#include "NG_Window.hh"
 
 void computeMatricesFromInputs(NG::Window& window);
 glm::mat4 getViewMatrix();

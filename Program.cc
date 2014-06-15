@@ -12,13 +12,11 @@ using std::vector;
 
 #include "texture.hh"
 #include "controls.hh"
-#include "objloader.hh"
-#include "vboindexer.hh"
 #include "text2D.hh"
 
-#include "NGWindow.hh"
-#include "NGShader.hh"
-#include "NGVertex.hh"
+#include "NG_Window.hh"
+#include "NG_Shader.hh"
+#include "NG_VBO.hh"
 
 int main(){
   cout << "Starting" << endl;
@@ -65,36 +63,8 @@ int main(){
   GLuint texture = loadDDS("resources/suzanne.DDS");
   GLuint textureID = glGetUniformLocation(standard_shading.m_id,"textureSampler");
 
-  vector<glm::vec3> vertices;
-  vector<glm::vec2> uvs;
-  vector<glm::vec3> normals;
-  bool res = loadOBJ("resources/suzanne.obj",vertices,uvs,normals);
-
-  vector<unsigned short> indices;
-  vector<glm::vec3> indexed_vertices;
-  vector<glm::vec2> indexed_uvs;
-  vector<glm::vec3> indexed_normals;
-  indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
-
-  GLuint vertexbuffer;
-  glGenBuffers(1,&vertexbuffer);
-  glBindBuffer(GL_ARRAY_BUFFER,vertexbuffer);
-  glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size()*sizeof(glm::vec3),&indexed_vertices[0], GL_STATIC_DRAW);
-
-  GLuint uvbuffer;
-  glGenBuffers(1, &uvbuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-  glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size()*sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);
-
-  GLuint normalbuffer;
-  glGenBuffers(1,&normalbuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-  glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
-
-  GLuint elementbuffer;
-  glGenBuffers(1, &elementbuffer);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
+  NG::VBO suzanne("resources/suzanne.obj");
+  suzanne.BindBuffers();
 
   standard_shading.Activate();
   GLuint lightID = glGetUniformLocation(standard_shading.m_id, "LightPosition_worldspace");
@@ -143,19 +113,7 @@ int main(){
     glBindTexture(GL_TEXTURE_2D, texture);
     glUniform1i(textureID, 0);
 
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER,vertexbuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER,uvbuffer);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER,normalbuffer);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0 );
+    suzanne.Draw();
 
     // Draw second object
 
@@ -169,19 +127,7 @@ int main(){
     glBindTexture(GL_TEXTURE_2D, texture);
     glUniform1i(textureID, 0);
 
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER,vertexbuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER,uvbuffer);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER,normalbuffer);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0 );
+    suzanne.Draw();
 
     // Clean up
 
@@ -197,10 +143,10 @@ int main(){
     glfwPollEvents();
   } while (!window.IsKeyPressed(GLFW_KEY_ESCAPE) && !window.ShouldClose());
 
-  glDeleteBuffers(1,&vertexbuffer);
-  glDeleteBuffers(1,&uvbuffer);
-  glDeleteBuffers(1, &normalbuffer);
-  glDeleteBuffers(1, &elementbuffer);
+  // glDeleteBuffers(1,&vertexbuffer);
+  // glDeleteBuffers(1,&uvbuffer);
+  // glDeleteBuffers(1, &normalbuffer);
+  // glDeleteBuffers(1, &elementbuffer);
   glDeleteTextures(1, &textureID);
   glDeleteVertexArrays(1, &VertexArrayID);
 

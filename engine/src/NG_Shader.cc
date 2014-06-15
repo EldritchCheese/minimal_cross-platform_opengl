@@ -1,4 +1,4 @@
-#include "NGShader.hh"
+#include "NG_Shader.hh"
 
 #include <string>
 #include <fstream>

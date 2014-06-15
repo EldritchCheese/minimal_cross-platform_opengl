@@ -1,4 +1,4 @@
-#include "NGWindow.hh"
+#include "NG_Window.hh"
 
 #include <stdexcept>
 
