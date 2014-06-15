@@ -64,7 +64,6 @@ int main(){
   GLuint textureID = glGetUniformLocation(standard_shading.m_id,"textureSampler");
 
   NG::VBO suzanne("resources/suzanne.obj");
-  suzanne.BindBuffers();
 
   standard_shading.Activate();
   GLuint lightID = glGetUniformLocation(standard_shading.m_id, "LightPosition_worldspace");

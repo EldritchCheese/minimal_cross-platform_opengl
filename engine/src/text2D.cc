@@ -8,22 +8,26 @@ using std::vector;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "shader.hh"
 #include "texture.hh"
+#include "NG_Shader.hh"
 
 unsigned int text2DtextureID;
 unsigned int text2DvertexBufferID;
 unsigned int text2DuvBufferID;
-unsigned int text2DshaderID;
 unsigned int text2DuniformID;
 
+NG::ShaderProgram* text_shading;
+
 void initText2D(const char* texturePath){
+  text_shading = new NG::ShaderProgram("resources/text_330.vertex","resources/text_330.fragment");
+
+
   text2DtextureID = loadDDS(texturePath);
 
   glGenBuffers(1, &text2DvertexBufferID);
   glGenBuffers(1, &text2DuvBufferID);
-  text2DshaderID = LoadShaders("resources/text_330.vertex","resources/text_330.fragment");
-  text2DuniformID = glGetUniformLocation(text2DshaderID, "textureSampler");
+  text2DuniformID = glGetUniformLocation(text_shading->m_id, "textureSampler");
+
 }
 
 void printText2D(const char* text, int x, int y, int size){
@@ -67,7 +71,7 @@ void printText2D(const char* text, int x, int y, int size){
   glBindBuffer(GL_ARRAY_BUFFER, text2DuvBufferID);
   glBufferData(GL_ARRAY_BUFFER, UVs.size()*sizeof(glm::vec2), &UVs[0], GL_STATIC_DRAW);
 
-  glUseProgram(text2DshaderID);
+  text_shading->Activate();
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, text2DtextureID);
@@ -96,5 +100,4 @@ void cleanupText2D(){
   glDeleteBuffers(1, &text2DvertexBufferID);
   glDeleteBuffers(1, &text2DuvBufferID);
   glDeleteTextures(1, &text2DtextureID);
-  glDeleteProgram(text2DshaderID);
 }

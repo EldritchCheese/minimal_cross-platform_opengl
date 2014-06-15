@@ -12,7 +12,9 @@ namespace NG{
   class VBO{
   public:
     VBO(const char* obj_path);
+    ~VBO();
     void BindBuffers();
+    void UnbindBuffers();
     void Draw();
   private:
     vector<glm::vec3> m_vertices;
@@ -20,6 +22,7 @@ namespace NG{
     vector<glm::vec3> m_normals;
     vector<unsigned short> m_indices;
 
+    bool m_buffers_bound;
     GLuint m_vertexbuffer, m_uvbuffer, m_normalbuffer, m_elementbuffer;
   };
 }

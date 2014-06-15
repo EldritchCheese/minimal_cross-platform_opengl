@@ -13,6 +13,8 @@ using namespace std;
 typedef unsigned int uint;
 
 NG::VBO::VBO(const char* obj_path){
+  m_buffers_bound = false;
+
   FILE* file = fopen(obj_path,"r");
   if(file==NULL){
     std::stringstream ss;
@@ -85,7 +87,17 @@ NG::VBO::VBO(const char* obj_path){
   }
 }
 
+NG::VBO::~VBO(){
+  UnbindBuffers();
+}
+
 void NG::VBO::BindBuffers(){
+  if(m_buffers_bound){
+    return;
+  }
+
+  m_buffers_bound = true;
+
   glGenBuffers(1,&m_vertexbuffer);
   glBindBuffer(GL_ARRAY_BUFFER,m_vertexbuffer);
   glBufferData(GL_ARRAY_BUFFER, m_vertices.size()*sizeof(glm::vec3),&m_vertices[0], GL_STATIC_DRAW);
@@ -103,7 +115,20 @@ void NG::VBO::BindBuffers(){
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned short), &m_indices[0], GL_STATIC_DRAW);
 }
 
+void NG::VBO::UnbindBuffers(){
+  if(!m_buffers_bound){
+    return;
+  }
+  m_buffers_bound = false;
+  glDeleteBuffers(1, &m_vertexbuffer);
+  glDeleteBuffers(1, &m_uvbuffer);
+  glDeleteBuffers(1, &m_normalbuffer);
+  glDeleteBuffers(1, &m_elementbuffer);
+}
+
 void NG::VBO::Draw(){
+  BindBuffers();
+
   glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER,m_vertexbuffer);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
