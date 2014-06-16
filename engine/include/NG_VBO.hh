@@ -16,6 +16,9 @@ namespace NG{
     void UnbindBuffers();
     void Draw();
   private:
+    void CustomLoader(const char* obj_path);
+    void AssimpLoader(const char* obj_path);
+
     vector<glm::vec3> m_vertices;
     vector<glm::vec2> m_uvs;
     vector<glm::vec3> m_normals;

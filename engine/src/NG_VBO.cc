@@ -6,15 +6,59 @@
 #include <tuple>
 #include <vector>
 #include <map>
-
 #include <iostream>
 using namespace std;
-
 typedef unsigned int uint;
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 NG::VBO::VBO(const char* obj_path){
   m_buffers_bound = false;
 
+  //CustomLoader(obj_path);
+  AssimpLoader(obj_path);
+}
+
+void NG::VBO::AssimpLoader(const char* obj_path){
+  Assimp::Importer importer;
+  // scene is owned by importer
+  const aiScene* scene = importer.ReadFile(obj_path, 0);
+  if(!scene){
+    std::stringstream ss;
+    ss << "Could not read " << obj_path;
+    throw std::runtime_error(ss.str());
+  }
+  const aiMesh* mesh = scene->mMeshes[0];
+
+  m_vertices.reserve(mesh->mNumVertices);
+  for(unsigned int i=0; i<mesh->mNumVertices; i++){
+    auto pos = mesh->mVertices[i];
+    m_vertices.push_back(glm::vec3(pos.x, pos.y, pos.z));
+  }
+
+  m_uvs.reserve(mesh->mNumVertices);
+  for(unsigned int i=0; i<mesh->mNumVertices; i++){
+    auto uvw = mesh->mTextureCoords[0][i];
+    m_uvs.push_back(glm::vec2(uvw.x, uvw.y));
+  }
+
+  m_normals.reserve(mesh->mNumVertices);
+  for(unsigned int i=0; i<mesh->mNumVertices; i++){
+    auto norm = mesh->mNormals[i];
+    m_normals.push_back(glm::vec3(norm.x, norm.y, norm.z));
+  }
+
+  m_indices.reserve(3*mesh->mNumFaces);
+  for(unsigned int i=0; i<mesh->mNumFaces; i++){
+    m_indices.push_back(mesh->mFaces[i].mIndices[0]);
+    m_indices.push_back(mesh->mFaces[i].mIndices[1]);
+    m_indices.push_back(mesh->mFaces[i].mIndices[2]);
+  }
+}
+
+void NG::VBO::CustomLoader(const char* obj_path){
   FILE* file = fopen(obj_path,"r");
   if(file==NULL){
     std::stringstream ss;
