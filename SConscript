@@ -18,7 +18,7 @@ env.Append(CPPPATH=['$BASEDIR/ext_libs/glew-1.10.0/include'])
 
 # GLFW
 libGLFW = env.Command(
-    'ext_libs/glfw-3.0.4/src/$GLFW',
+    'ext_libs/glfw-3.0.4/src/libglfw3.a',
     [pjoin('ext_libs','glfw-3.0.4',line.strip())
      for line in open(pjoin(env['BASEDIR'],'ext_libs','glfw-3.0.4','file_list.txt'))],
     'cd $DIR/ext_libs/glfw-3.0.4 && '
@@ -39,12 +39,13 @@ libSOIL = env.SConscript('ext_libs/soil/SConscript',exports=['env'])
 
 # assimp
 env.Append(CPPPATH=['$BASEDIR/ext_libs/assimp-3.0.1270/include'])
+env.Append(LIBS=['z'])
 libASSIMP = env.Command(
     'ext_libs/assimp-3.0.1270/lib/libassimp.a',
     [pjoin('ext_libs','assimp-3.0.1270',line.strip())
      for line in open(pjoin(env['BASEDIR'],'ext_libs','assimp-3.0.1270','file_list.txt'))],
     'cd $DIR/ext_libs/assimp-3.0.1270 && '
-    'cmake $CMAKE_TOOLCHAIN -D BUILD_STATIC_LIB=ON -D ENABLE_BOOST_WORKAROUND=ON ' #'-D NO_EXPORT=ON '
+    'cmake $CMAKE_TOOLCHAIN -D BUILD_STATIC_LIB=ON -D ENABLE_BOOST_WORKAROUND=ON '
                            '-D BUILD_ASSIMP_TOOLS=OFF $CMAKE_FLAGS . && '
     'make')
 
