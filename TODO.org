@@ -1,0 +1,16 @@
+* NGine
+** TODO Ensure that textures are loaded in the correct orientation.
+   DirectX has (0,0) be the top-left, rather than the bottom-left.
+   DDS textures can sometimes be flipped on the Y-axis.
+   Check to make sure that I have the correct orientation.
+** TODO Direct reading from disk to VBO.
+   Currently, parsing the OBJ files directly at runtime.
+   Would be handy to just open a file, then dump directly to VBO.
+** TODO .blend -> mesh/texture option, made at build time.
+   Custom exporter, perhaps as shown here.
+   http://indygamedev.com/blender/automating-fbx-model-export-process/
+
+* Build script
+** TODO Option for shared libraries.
+   Faster to link for testing purposes.
+   Release option should still compile into single binary.

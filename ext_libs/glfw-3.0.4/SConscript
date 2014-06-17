@@ -1,0 +1,22 @@
+# -*- python -*-
+
+Import('env')
+
+if env['DIR']=='linux':
+    env.Append(CPPDEFINES=['_GLFW_X11',
+                           '_GLFW_GLX',
+                           '_GLFW_HAS_GLXGETPROCADDRESS',
+                           '_GLFW_HAS_GLXGETPROCADDRESSARB',
+                           '_GLFW_USE_OPENGL'])
+    excludes = ['cocoa_','win32_','egl_','wgl_']
+elif env['DIR']=='win32' or env['DIR']=='win64':
+    env.Append(CPPDEFINES=['_GLFW_WIN32',
+                           '_GLFW_WGL',
+                           '_GLFW_USE_OPENGL'])
+    excludes = ['cocoa_','x11_','egl_','glx_']
+
+env.Append(CPPPATH=['src','include'])
+lib = env.Library('libglfw3.a',
+                  [f for f in Glob('src/*.c') if not any(e in str(f) for e in excludes)])
+
+Return('lib')

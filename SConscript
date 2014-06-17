@@ -17,13 +17,7 @@ libGLEW = env.Command(
 env.Append(CPPPATH=['$BASEDIR/ext_libs/glew-1.10.0/include'])
 
 # GLFW
-libGLFW = env.Command(
-    'ext_libs/glfw-3.0.4/src/libglfw3.a',
-    [pjoin('ext_libs','glfw-3.0.4',line.strip())
-     for line in open(pjoin(env['BASEDIR'],'ext_libs','glfw-3.0.4','file_list.txt'))],
-    'cd $DIR/ext_libs/glfw-3.0.4 && '
-    'cmake $CMAKE_TOOLCHAIN $CMAKE_FLAGS . && '
-    'make')
+libGLFW = env.SConscript('ext_libs/glfw-3.0.4/SConscript',exports=['env'])
 env.Append(CPPPATH=['$BASEDIR/ext_libs/glfw-3.0.4/include'])
 
 # GL

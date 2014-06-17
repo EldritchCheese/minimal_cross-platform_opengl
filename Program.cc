@@ -33,8 +33,10 @@ int main(){
   glEnable(GL_CULL_FACE);
 
   NG::ShaderProgram standard_shading("resources/standard_330.vertex","resources/standard_330.fragment");
-  NG::Texture suzanne_texture("resources/suzanne.DDS");
-  NG::VBO suzanne_vbo("resources/suzanne.obj");
+  // NG::Texture suzanne_texture("resources/suzanne.DDS");
+  // NG::VBO suzanne_vbo("resources/suzanne.obj");
+  NG::Texture suzanne_texture("resources/first_model.DDS");
+  NG::VBO suzanne_vbo("resources/first_model.obj");
   NG::Text2D text_overlay("resources/text_330.vertex","resources/text_330.fragment","resources/Holstein.DDS");
 
   double lastTime = glfwGetTime();
@@ -73,21 +75,6 @@ int main(){
     double theta = 2*3.14159*time/(3.0);
     glm::vec3 lightPos = glm::vec3(4*cos(theta),4*sin(theta),4);
     standard_shading.LoadUniform("LightPosition_worldspace",lightPos);
-
-    // Draw first object
-
-    suzanne_texture.Activate(GL_TEXTURE0);
-    standard_shading.LoadUniform("textureSampler", 0);
-
-    suzanne_vbo.Draw();
-
-    // Draw second object
-
-    model = glm::translate(model, glm::vec3(2.5,0,0));
-    mvp = projection * view * model;
-
-    standard_shading.LoadUniform("MVP",mvp);
-    standard_shading.LoadUniform("M",model);
 
     suzanne_texture.Activate(GL_TEXTURE0);
     standard_shading.LoadUniform("textureSampler", 0);
