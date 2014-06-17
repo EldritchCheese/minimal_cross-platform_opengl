@@ -5,15 +5,8 @@ from os.path import join as pjoin
 
 Import('env')
 
-env.Append(RPATH=[Literal('\\$$ORIGIN')])
-env.Append(CPPPATH=['$BASEDIR/include'])
-
 # GLEW
-libGLEW = env.Command(
-    'ext_libs/glew-1.10.0/lib/$GLEW',
-    [pjoin('ext_libs','glew-1.10.0',line.strip())
-     for line in open(pjoin(env['BASEDIR'],'ext_libs','glew-1.10.0','file_list.txt'))],
-    'cd $DIR/ext_libs/glew-1.10.0 && make')
+libGLEW = env.SConscript('ext_libs/glew-1.10.0/SConscript',exports=['env'])
 env.Append(CPPPATH=['$BASEDIR/ext_libs/glew-1.10.0/include'])
 
 # GLFW
@@ -45,7 +38,11 @@ libASSIMP = env.Command(
 
 # custom engine
 env.Append(CPPPATH=['$BASEDIR/engine/include'])
+env.Append(CPPDEFINES=['GLEW_STATIC'])
 libNGine = env.SConscript('engine/SConscript',exports=['env'])
+
+env.Append(RPATH=[Literal('\\$$ORIGIN')])
+env.Append(CPPPATH=['$BASEDIR/include'])
 
 exe = env.Program(['Program.cc',Glob('src/*.cc'),libNGine,libASSIMP,libGLFW,libGLEW,libSOIL])
 env.Install('dist',exe)

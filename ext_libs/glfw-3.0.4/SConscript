@@ -1,6 +1,7 @@
 # -*- python -*-
 
 Import('env')
+env = env.Clone()
 
 if env['DIR']=='linux':
     env.Append(CPPDEFINES=['_GLFW_X11',

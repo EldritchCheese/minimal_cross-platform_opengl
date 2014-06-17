@@ -1,0 +1,10 @@
+# -*- python -*-
+
+Import('env')
+env = env.Clone()
+
+env.Append(CPPDEFINES=['GLEW_STATIC'])
+env.Append(CPPPATH=['include'])
+lib = env.Library('libGLEW.a','src/glew.c')
+
+Return('lib')

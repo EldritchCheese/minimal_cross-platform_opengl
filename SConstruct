@@ -40,15 +40,15 @@ win64['CMAKE_TOOLCHAIN'] = '-D CMAKE_TOOLCHAIN_FILE=$BASEDIR/ext_libs/win64.cmak
 
 
 #Platform-specific GLEW
-win32['ENV']['SYSTEM'] = 'linux-mingw32'
-win32['GLEW'] = 'libglew32.a'
-win32.Append(CCFLAGS=['-DGLEW_STATIC'])
-win32.Append(LINKFLAGS=['-DGLEW_STATIC'])
-win64['ENV']['SYSTEM'] = 'linux-mingw64'
-win64['GLEW'] = 'libglew32.a'
-win64.Append(CCFLAGS=['-DGLEW_STATIC'])
-win64.Append(LINKFLAGS=['-DGLEW_STATIC'])
-linux['GLEW'] = 'libGLEW.a'
+#win32['ENV']['SYSTEM'] = 'linux-mingw32'
+#win32['GLEW'] = 'libglew32.a'
+#win32.Append(CCFLAGS=['-DGLEW_STATIC'])
+#win32.Append(LINKFLAGS=['-DGLEW_STATIC'])
+#win64['ENV']['SYSTEM'] = 'linux-mingw64'
+#win64['GLEW'] = 'libglew32.a'
+#win64.Append(CCFLAGS=['-DGLEW_STATIC'])
+#win64.Append(LINKFLAGS=['-DGLEW_STATIC'])
+#linux['GLEW'] = 'libGLEW.a'
 
 #Platform-specific OpenGL
 win32['OPENGL'] = 'opengl32'
