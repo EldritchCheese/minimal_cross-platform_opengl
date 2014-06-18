@@ -1,0 +1,26 @@
+# -*- python -*-
+
+Import('env')
+env = env.Clone()
+
+env.Append(CCFLAGS=['-O3'])
+
+env.Append(CPPPATH=['include','code/BoostWorkaround','contrib/unzip'])
+
+
+env.Append(CPPDEFINES=['ASSIMP_BUILD_BOOST_WORKAROUND',
+                       'ASSIMP_BUILD_DLL_EXPORT',
+                       'ASSIMP_BUILD_NO_OWN_ZLIB'])
+
+patterns = ['code/*.cpp',
+            'contrib/clipper/*.cpp',
+            'contrib/ConvertUTF/*.c',
+            'contrib/irrXML/*.cpp',
+            'contrib/unzip/*.c',
+            'contrib/zlib/*.c',
+            'contrib/poly2tri/poly2tri/common/*.cc',
+            'contrib/poly2tri/poly2tri/sweep/*.cc']
+
+lib = env.Library('libASSIMP.a',[Glob(p) for p in patterns])
+
+Return('lib')

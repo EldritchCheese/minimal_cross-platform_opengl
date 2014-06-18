@@ -1,4 +1,4 @@
-/* 
+/*
  * Poly2Tri Copyright (c) 2009-2010, Poly2Tri Contributors
  * http://code.google.com/p/poly2tri/
  *
@@ -28,7 +28,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -37,6 +37,9 @@
 
 #include <exception>
 #include <math.h>
+
+#define M_PI 3.1415926535
+#define M_PI_2 (M_PI/2)
 
 namespace p2t {
 

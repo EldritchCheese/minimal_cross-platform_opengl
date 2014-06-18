@@ -6,6 +6,7 @@ from os.path import join as pjoin
 Import('env')
 
 # GLEW
+env.Append(CPPDEFINES=['GLEW_STATIC'])
 libGLEW = env.SConscript('ext_libs/glew-1.10.0/SConscript',exports=['env'])
 env.Append(CPPPATH=['$BASEDIR/ext_libs/glew-1.10.0/include'])
 
@@ -27,18 +28,10 @@ libSOIL = env.SConscript('ext_libs/soil/SConscript',exports=['env'])
 # assimp
 env.Append(CPPPATH=['$BASEDIR/ext_libs/assimp-3.0.1270/include'])
 env.Append(LIBS=['z'])
-libASSIMP = env.Command(
-    'ext_libs/assimp-3.0.1270/lib/libassimp.a',
-    [pjoin('ext_libs','assimp-3.0.1270',line.strip())
-     for line in open(pjoin(env['BASEDIR'],'ext_libs','assimp-3.0.1270','file_list.txt'))],
-    'cd $DIR/ext_libs/assimp-3.0.1270 && '
-    'cmake $CMAKE_TOOLCHAIN -D BUILD_STATIC_LIB=ON -D ENABLE_BOOST_WORKAROUND=ON '
-                           '-D BUILD_ASSIMP_TOOLS=OFF $CMAKE_FLAGS . && '
-    'make')
+libASSIMP = env.SConscript('ext_libs/assimp-3.0.1270/SConscript',exports=['env'])
 
 # custom engine
 env.Append(CPPPATH=['$BASEDIR/engine/include'])
-env.Append(CPPDEFINES=['GLEW_STATIC'])
 libNGine = env.SConscript('engine/SConscript',exports=['env'])
 
 env.Append(RPATH=[Literal('\\$$ORIGIN')])
