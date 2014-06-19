@@ -3,8 +3,13 @@
 import os
 
 glob_env = Environment()
-glob_env['BASEDIR'] = os.getcwd()
-glob_env['CMAKE_FLAGS'] = '-D CMAKE_CXX_FLAGS=-O3'
+
+glob_env['CXXCOMSTR'] = 'Compiling object $TARGETS'
+glob_env['CCCOMSTR'] = 'Compiling object $TARGETS'
+glob_env['ARCOMSTR'] = 'Packing static library $TARGETS'
+glob_env['RANLIBCOMSTR'] = 'Indexing static library $TARGETS'
+glob_env['SHCXXCOMSTR'] = 'Compiling shared object $TARGETS'
+glob_env['LINKCOMSTR'] = 'Linking $TARGETS'
 
 win32 = glob_env.Clone()
 win64 = glob_env.Clone()

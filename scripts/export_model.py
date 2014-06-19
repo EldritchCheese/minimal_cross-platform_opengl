@@ -8,15 +8,14 @@ if len(sys.argv) < 7:
     exit(1)
 
 # Usage:
-# blender -b INFILE.blend --python "export.py" -- ModelName OUTFILE
+# blender -b INFILE.blend --python "export.py" -- OUTFILE
 
-blenderObjectName = sys.argv[6]
-outfile = sys.argv[7]
+outfile = sys.argv[6]
 
-bpy.context.scene.objects.active = bpy.context.scene.objects[blenderObjectName]
+bpy.context.scene.objects.active = bpy.data.objects[0]
 
-for ob in bpy.data.objects:
-    ob.select = (ob.name == blenderObjectName)
+for i,ob in enumerate(bpy.data.objects):
+    ob.select = (ob==0)
 
 bpy.ops.export_scene.obj(
     filepath = outfile,

@@ -10,15 +10,20 @@ env = Environment(tools=['default',
                          bld_extensions.TOOL_TEXTURE,
                          bld_extensions.TOOL_MODEL])
 
+# Find all files.
+image_formats = ['dds','png','bmp']
+for root, dirs, files in os.walk('raw_textures'):
+    for file_name in files:
+        ext = os.path.splitext(file_name)[1][1:]
+        if ext.lower() in image_formats:
+            env.Texture(os.path.join(root,file_name))
 
-
-for raw_texture in Glob('raw_textures/*.png'):
-    env.Texture(raw_texture)
-for raw_texture in Glob('raw_textures/*.DDS'):
-    env.Texture(raw_texture)
-
-for raw_model in Glob('raw_models/*.blend'):
-    env.Model(raw_model)
+# Find all models
+for root, dirs, files in os.walk('raw_models'):
+    for file_name in files:
+        ext = os.path.splitext(file_name)[1][1:]
+        if ext.lower() == 'blend':
+            env.Model(os.path.join(root,file_name))
 
 env.Clean('.',['textures','models'])
 
