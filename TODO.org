@@ -9,6 +9,8 @@
 ** TODO .blend -> mesh/texture option, made at build time.
    Custom exporter, perhaps as shown here.
    http://indygamedev.com/blender/automating-fbx-model-export-process/
+** TODO Move NG::Window's s_glfw and s_glew into anonymous namespace
+** TODO Add callback options for windows.
 
 * Build script
 ** TODO Option for shared libraries.

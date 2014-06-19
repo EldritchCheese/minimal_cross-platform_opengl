@@ -38,5 +38,5 @@ env.Append(RPATH=[Literal('\\$$ORIGIN')])
 env.Append(CPPPATH=['$BASEDIR/include'])
 
 exe = env.Program(['Program.cc',Glob('src/*.cc'),libNGine,libASSIMP,libGLFW,libGLEW,libSOIL])
-env.Install('dist',exe)
-env.Install('dist/resources',Glob('resources/*'))
+
+Return('exe')

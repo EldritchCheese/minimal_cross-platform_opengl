@@ -32,12 +32,10 @@ int main(){
   glDepthFunc(GL_LESS);
   glEnable(GL_CULL_FACE);
 
-  NG::ShaderProgram standard_shading("resources/standard_330.vertex","resources/standard_330.fragment");
-  // NG::Texture suzanne_texture("resources/suzanne.DDS");
-  // NG::VBO suzanne_vbo("resources/suzanne.obj");
-  NG::Texture suzanne_texture("resources/first_model.DDS");
-  NG::VBO suzanne_vbo("resources/first_model.obj");
-  NG::Text2D text_overlay("resources/text_330.vertex","resources/text_330.fragment","resources/Holstein.DDS");
+  NG::ShaderProgram standard_shading("shaders/standard.vertex","shaders/standard.fragment");
+  NG::Texture suzanne_texture("textures/first_model.dds");
+  NG::VBO suzanne_vbo("models/first_model.obj");
+  NG::Text2D text_overlay("shaders/text.vertex","shaders/text.fragment","textures/Holstein.dds");
 
   double lastTime = glfwGetTime();
   int nbFrames = 0;

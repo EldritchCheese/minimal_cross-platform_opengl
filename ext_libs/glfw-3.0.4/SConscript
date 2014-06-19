@@ -3,14 +3,14 @@
 Import('env')
 env = env.Clone()
 
-if env['DIR']=='linux':
+if env['SYS']=='linux':
     env.Append(CPPDEFINES=['_GLFW_X11',
                            '_GLFW_GLX',
                            '_GLFW_HAS_GLXGETPROCADDRESS',
                            '_GLFW_HAS_GLXGETPROCADDRESSARB',
                            '_GLFW_USE_OPENGL'])
     excludes = ['cocoa_','win32_','egl_','wgl_']
-elif env['DIR']=='win32' or env['DIR']=='win64':
+elif env['SYS']=='win32' or env['SYS']=='win64':
     env.Append(CPPDEFINES=['_GLFW_WIN32',
                            '_GLFW_WGL',
                            '_GLFW_USE_OPENGL'])

@@ -11,9 +11,9 @@ win64 = glob_env.Clone()
 linux = glob_env.Clone()
 
 #Define the working directory
-win32['DIR'] = 'win32'
-win64['DIR'] = 'win64'
-linux['DIR'] = 'linux'
+win32['SYS'] = 'win32'
+win64['SYS'] = 'win64'
+linux['SYS'] = 'linux'
 
 #Define the compilers, using C++11
 win32.Replace(CC='i686-w64-mingw32-gcc')
@@ -34,23 +34,27 @@ win64.Replace(SHLIBSUFFIX='.dll')
 win64.Replace(PROGSUFFIX='.exe')
 win64.Append(LINKFLAGS='-static')
 
-#Platform-specific cmake
-win32['CMAKE_TOOLCHAIN'] = '-D CMAKE_TOOLCHAIN_FILE=$BASEDIR/ext_libs/win32.cmake'
-win64['CMAKE_TOOLCHAIN'] = '-D CMAKE_TOOLCHAIN_FILE=$BASEDIR/ext_libs/win64.cmake'
-
 #Platform-specific OpenGL
 win32['OPENGL'] = 'opengl32'
 win64['OPENGL'] = 'opengl32'
 linux['OPENGL'] = 'GL'
-win32.Append(LIBS=['gdi32','comdlg32','user32']) #graphics libraries
-win64.Append(LIBS=['gdi32','comdlg32','user32']) #graphics libraries
-linux.Append(LIBS=['X11','Xxf86vm','Xrandr','pthread','Xi']) #graphics libraries
+win32.Append(LIBS=['gdi32','comdlg32','user32'])
+win64.Append(LIBS=['gdi32','comdlg32','user32'])
+linux.Append(LIBS=['X11','Xxf86vm','Xrandr','pthread','Xi'])
+
+resources = SConscript('resources/SConscript')
 
 for env in [win32,win64,linux]:
     env['ENV']['CC'] = env['CC']
     env['ENV']['CXX'] = env['CXX']
-    output = SConscript('SConscript',variant_dir=env['DIR'],src_dir='.',exports=['env'])
-    Clean('.',env['DIR'])
+    build_dir = os.path.join('build',env['SYS'])
+    exe = SConscript('SConscript',
+                     variant_dir=build_dir,
+                     src_dir='.',
+                     exports=['env'])
+    inst_dir = env['SYS']
+    Install(inst_dir,[exe,resources])
 
-Alias('all','.')
+Clean('.','build')
+
 

@@ -1,6 +1,10 @@
 *~
+*.pyc
+*.blend1
 .sconsign.dblite
 native
 linux
 win32
 win64
+resources/models
+resources/textures

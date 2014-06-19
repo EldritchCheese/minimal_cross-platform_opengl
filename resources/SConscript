@@ -1,0 +1,29 @@
+# -*- python -*-
+
+import os
+import sys
+
+sys.path.append(Dir('#/scripts').abspath)
+import bld_extensions
+
+env = Environment(tools=['default',
+                         bld_extensions.TOOL_TEXTURE,
+                         bld_extensions.TOOL_MODEL])
+
+
+
+for raw_texture in Glob('raw_textures/*.png'):
+    env.Texture(raw_texture)
+for raw_texture in Glob('raw_textures/*.DDS'):
+    env.Texture(raw_texture)
+
+for raw_model in Glob('raw_models/*.blend'):
+    env.Model(raw_model)
+
+env.Clean('.',['textures','models'])
+
+resources = [Dir('shaders'),
+             Dir('textures'),
+             Dir('models')]
+
+Return('resources')
