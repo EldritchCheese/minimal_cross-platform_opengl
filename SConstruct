@@ -1,19 +1,23 @@
 # -*- python -*-
 
 import os
+import sys
+sys.path.append('scripts')
+import bld_extensions
 
-glob_env = Environment()
+env = Environment(tools=['default',
+                         bld_extensions.TOOL_RECURSIVE_INSTALL])
 
-glob_env['CXXCOMSTR'] = 'Compiling object $TARGETS'
-glob_env['CCCOMSTR'] = 'Compiling object $TARGETS'
-glob_env['ARCOMSTR'] = 'Packing static library $TARGETS'
-glob_env['RANLIBCOMSTR'] = 'Indexing static library $TARGETS'
-glob_env['SHCXXCOMSTR'] = 'Compiling shared object $TARGETS'
-glob_env['LINKCOMSTR'] = 'Linking $TARGETS'
+env['CXXCOMSTR'] = 'Compiling object $TARGETS'
+env['CCCOMSTR'] = 'Compiling object $TARGETS'
+env['ARCOMSTR'] = 'Packing static library $TARGETS'
+env['RANLIBCOMSTR'] = 'Indexing static library $TARGETS'
+env['SHCXXCOMSTR'] = 'Compiling shared object $TARGETS'
+env['LINKCOMSTR'] = 'Linking $TARGETS'
 
-win32 = glob_env.Clone()
-win64 = glob_env.Clone()
-linux = glob_env.Clone()
+win32 = env.Clone()
+win64 = env.Clone()
+linux = env.Clone()
 
 #Define the working directory
 win32['SYS'] = 'win32'
@@ -58,7 +62,7 @@ for env in [win32,win64,linux]:
                      src_dir='.',
                      exports=['env'])
     inst_dir = env['SYS']
-    Install(inst_dir,[exe,resources])
+    env.RecursiveInstall(inst_dir,[exe,resources])
 
 Clean('.','build')
 

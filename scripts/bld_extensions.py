@@ -28,11 +28,14 @@ def TOOL_TEXTURE(env):
 
 # Converting .blend objects to .obj
 def model_emitter(target, source, env):
+    #Correct target
     path, name = os.path.split(str(target[0]))
     basename, ext = os.path.splitext(name)
     ext = '.obj'
     path = path.replace('raw_models','models')
     target = os.path.join(path,name+ext)
+    #export script as dependency
+    source.append('#/scripts/export_model.py')
     return target, source
 
 def model_generator(source,target,env,for_signature):
@@ -44,3 +47,30 @@ model_bld = Builder(generator = model_generator,
 
 def TOOL_MODEL(env):
     env.Append(BUILDERS={'Model':model_bld})
+
+
+
+# Recursive Install
+def RecursiveInstall(env, target, src):
+    root_items = []
+    for src_list in src:
+        root_items.extend(src_list)
+
+    for root_item in root_items:
+        unsearched = [root_item]
+        base_dir = os.path.split(str(root_item))[0]
+        #Recursive search
+        while unsearched:
+            current = unsearched.pop()
+            if current.isdir():
+                unsearched.extend(Glob(str(current)+'/*'))
+            else:
+                dir_initial, filename = os.path.split(str(current))
+                dir_relative = dir_initial[len(str(base_dir))+1:]
+                output_dir = (os.path.join(str(target),dir_relative)
+                              if dir_relative else str(target))
+                env.Install(output_dir,current)
+
+
+def TOOL_RECURSIVE_INSTALL(env):
+    env.AddMethod(RecursiveInstall)
