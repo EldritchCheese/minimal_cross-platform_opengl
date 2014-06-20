@@ -2,8 +2,10 @@
 
 #include <stdexcept>
 
-static std::weak_ptr<NG::GLFW> s_glfw;
-static std::weak_ptr<NG::GLEW> s_glew;
+namespace {
+	static std::weak_ptr<NG::GLFW> s_glfw;
+	static std::weak_ptr<NG::GLEW> s_glew;
+}
 
 NG::Window::Window(int width, int height, const char* name, GLFWmonitor* monitor, GLFWwindow* share){
   if(!s_glfw.lock()){

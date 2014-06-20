@@ -6,7 +6,6 @@
 ** TODO Direct reading from disk to VBO.
    Currently, parsing the OBJ files directly at runtime.
    Would be handy to just open a file, then dump directly to VBO.
-** TODO Move NG::Window's s_glfw and s_glew into anonymous namespace
 ** TODO Add callback options for windows.
 
 * Build script
