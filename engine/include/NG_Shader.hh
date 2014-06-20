@@ -3,10 +3,12 @@
 
 #include <map>
 #include <string>
+#include <memory>
 
 #include <glm/glm.hpp>
 
 #include "NG_GL.hh"
+#include "NG_Texture.hh"
 
 namespace NG{
   class ShaderProgram{
@@ -19,9 +21,16 @@ namespace NG{
     void LoadUniform(const char* name, glm::vec3& vec);
     void LoadUniform(const char* name, double x, double y, double z);
     void LoadUniform(const char* name, GLuint val);
+
+		void ActivateTexture(std::shared_ptr<NG::Texture> texture);
+		void LoadModelMatrix(glm::mat4& mat);
+		void LoadViewMatrix(glm::mat4& mat);
+		void LoadPerspectiveMatrix(glm::mat4& mat);
+		void LoadMVPMatrix(glm::mat4& mat);
   public:
     GLuint m_id;
     std::map<std::string, GLuint> m_uniform_locations;
+		std::shared_ptr<NG::Texture> texture;
   };
 
   class Shader{

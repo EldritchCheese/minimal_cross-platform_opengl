@@ -4,6 +4,7 @@ using std::endl;
 #include <vector>
 using std::vector;
 
+#include <memory>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,6 +17,7 @@ using std::vector;
 #include "NG_VBO.hh"
 #include "NG_Texture.hh"
 #include "NG_Text2D.hh"
+#include "NG_StaticDrawable.hh"
 
 int main(){
   cout << "Starting" << endl;
@@ -33,9 +35,16 @@ int main(){
   glEnable(GL_CULL_FACE);
 
   NG::ShaderProgram standard_shading("shaders/standard.vertex","shaders/standard.fragment");
-  NG::Texture suzanne_texture("textures/first_model.dds");
-  NG::VBO suzanne_vbo("models/first_model.obj");
   NG::Text2D text_overlay("shaders/text.vertex","shaders/text.fragment","textures/Holstein.dds");
+
+
+	glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),3.14159f/2.0f,glm::vec3(1,0,0));
+	glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),-3.14159f/2.0f,glm::vec3(0,0,1));
+	glm::mat4 model = rotateZ * rotateX;
+	auto suzanne_texture = std::make_shared<NG::Texture>("textures/first_model.dds");
+  auto suzanne_vbo = std::make_shared<NG::VBO>("models/first_model.obj");
+	NG::StaticDrawable suzanne(suzanne_vbo, suzanne_texture, model);
+
 
   double lastTime = glfwGetTime();
   int nbFrames = 0;
@@ -55,29 +64,17 @@ int main(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     standard_shading.Activate();
-
-    computeMatricesFromInputs(window);
-    glm::mat4 projection = getProjectionMatrix();
-    glm::mat4 view = getViewMatrix();
-    glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),3.14159f/2.0f,glm::vec3(1,0,0));
-    glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),-3.14159f/2.0f,glm::vec3(0,0,1));
-    glm::mat4 model = rotateZ * rotateX;
-    glm::mat4 mvp = projection * view * model;
-
-    standard_shading.LoadUniform("MVP",mvp);
-    standard_shading.LoadUniform("M",model);
-    standard_shading.LoadUniform("V",view);
-
-
     double time = glfwGetTime();
     double theta = 2*3.14159*time/(3.0);
     glm::vec3 lightPos = glm::vec3(4*cos(theta),4*sin(theta),4);
     standard_shading.LoadUniform("LightPosition_worldspace",lightPos);
 
-    suzanne_texture.Activate(GL_TEXTURE0);
-    standard_shading.LoadUniform("textureSampler", 0);
+    computeMatricesFromInputs(window);
+    glm::mat4 projection = getProjectionMatrix();
+    glm::mat4 view = getViewMatrix();
+		NG::Camera camera(view,projection);
 
-    suzanne_vbo.Draw();
+		suzanne.Draw(standard_shading, camera);
 
     //Text overlay
 

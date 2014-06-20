@@ -37,7 +37,7 @@ def model_emitter(target, source, env):
 
 def model_generator(source,target,env,for_signature):
     source_ext = os.path.splitext(str(source[0]))[1]
-    return 'blender -b $SOURCE --python scripts/export_model.py -- Cube.002 $TARGET'
+    return 'blender -b $SOURCE --python scripts/export_model.py -- $TARGET'
 
 model_bld = Builder(generator = model_generator,
                       emitter = model_emitter)

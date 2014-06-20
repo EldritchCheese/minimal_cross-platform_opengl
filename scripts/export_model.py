@@ -19,7 +19,7 @@ for i,ob in enumerate(bpy.data.objects):
 
 bpy.ops.export_scene.obj(
     filepath = outfile,
-    use_selection = True,
+    use_selection = False,
     use_edges = False,
     use_normals = True,
     use_uvs = True,

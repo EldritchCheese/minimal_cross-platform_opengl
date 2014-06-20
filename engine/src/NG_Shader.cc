@@ -68,6 +68,28 @@ void NG::ShaderProgram::LoadUniform(const char* name, GLuint val){
   glUniform1i(GetUniformLocation(name), val);
 }
 
+void NG::ShaderProgram::ActivateTexture(std::shared_ptr<NG::Texture> texture){
+	texture->Activate(GL_TEXTURE0);
+	LoadUniform("textureSampler",0);
+}
+
+void NG::ShaderProgram::LoadModelMatrix(glm::mat4& mat){
+	LoadUniform("M",mat);
+}
+
+void NG::ShaderProgram::LoadViewMatrix(glm::mat4& mat){
+	LoadUniform("V",mat);
+}
+
+void NG::ShaderProgram::LoadPerspectiveMatrix(glm::mat4& mat){
+	LoadUniform("P",mat);
+}
+
+void NG::ShaderProgram::LoadMVPMatrix(glm::mat4& mat){
+	LoadUniform("MVP",mat);
+}
+
+
 NG::Shader::Shader(const char* file_path, GLuint shader_type){
   // Read from file
   std::ifstream fileStream(file_path, std::ios::in);
