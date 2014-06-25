@@ -9,7 +9,9 @@ using std::vector;
 
 namespace NG{
 	enum vbo_input_filetype_t{
+		#ifdef USE_ASSIMP_LIBRARY
 		OBJ_FILE,
+		#endif
 		DAT_FILE
 	};
 
@@ -22,7 +24,9 @@ namespace NG{
     void UnbindBuffers();
     void Draw();
   private:
+		#ifdef USE_ASSIMP_LIBRARY
     void AssimpLoader(const char* obj_path);
+		#endif
 		void DatLoader(const char* obj_path);
 
     vector<glm::vec3> m_vertices;

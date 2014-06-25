@@ -11,17 +11,21 @@
 #include <cstdint>
 using namespace std;
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#ifdef USE_ASSIMP_LIBRARY
+  #include <assimp/Importer.hpp>
+  #include <assimp/scene.h>
+  #include <assimp/postprocess.h>
+#endif
 
 NG::VBO::VBO(const char* file_path, vbo_input_filetype_t type){
   m_buffers_bound = false;
 
 	switch(type){
+		#ifdef USE_ASSIMP_LIBRARY
 	case OBJ_FILE:
 		AssimpLoader(file_path);
 		break;
+		#endif
 	case DAT_FILE:
 		DatLoader(file_path);
 		break;
@@ -60,6 +64,7 @@ void NG::VBO::DatLoader(const char* file_path){
 	binary_read(infile, m_indices.data(), index_length);
 }
 
+#ifdef USE_ASSIMP_LIBRARY
 void NG::VBO::AssimpLoader(const char* obj_path){
   Assimp::Importer importer;
   // scene is owned by importer
@@ -96,6 +101,7 @@ void NG::VBO::AssimpLoader(const char* obj_path){
     m_indices.push_back(mesh->mFaces[i].mIndices[2]);
   }
 }
+#endif
 
 NG::VBO::~VBO(){
   UnbindBuffers();

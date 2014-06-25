@@ -5,8 +5,11 @@ import sys
 sys.path.append('scripts')
 import bld_extensions
 
+AddOption('--def', dest='CPPDEFINES', type='string', nargs=1, action='append')
+
 env = Environment(tools=['default',
-                         bld_extensions.TOOL_RECURSIVE_INSTALL])
+                         bld_extensions.TOOL_RECURSIVE_INSTALL],
+                  CPPDEFINES=GetOption('CPPDEFINES'))
 
 env['CXXCOMSTR'] = 'Compiling object $TARGETS'
 env['CCCOMSTR'] = 'Compiling object $TARGETS'
