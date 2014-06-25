@@ -7,17 +7,57 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <fstream>
+#include <cstdint>
 using namespace std;
-typedef unsigned int uint;
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-NG::VBO::VBO(const char* obj_path){
+NG::VBO::VBO(const char* file_path, vbo_input_filetype_t type){
   m_buffers_bound = false;
 
-  AssimpLoader(obj_path);
+	switch(type){
+	case OBJ_FILE:
+		AssimpLoader(file_path);
+		break;
+	case DAT_FILE:
+		DatLoader(file_path);
+		break;
+	default:
+		throw std::runtime_error("Unknown file type");
+		break;
+	}
+}
+
+namespace {
+	template<typename T>
+	void binary_read(ifstream& file, T* location, long length){
+		file.read((char*)location, sizeof(T) * length);
+	}
+}
+
+void NG::VBO::DatLoader(const char* file_path){
+	ifstream infile(file_path, ios::in | ios::binary);
+
+	uint16_t vertex_length;
+	cout << "vertex length " << vertex_length << endl;
+	binary_read(infile, &vertex_length, 1);
+	m_vertices.resize(vertex_length);
+	m_uvs.resize(vertex_length);
+	m_normals.resize(vertex_length);
+
+	binary_read(infile, m_vertices.data(), vertex_length);
+	binary_read(infile, m_uvs.data(), vertex_length);
+	binary_read(infile, m_normals.data(), vertex_length);
+
+	uint16_t index_length;
+	cout << "index length " << index_length << endl;
+	binary_read(infile, &index_length, 1);
+	m_indices.resize(index_length);
+
+	binary_read(infile, m_indices.data(), index_length);
 }
 
 void NG::VBO::AssimpLoader(const char* obj_path){

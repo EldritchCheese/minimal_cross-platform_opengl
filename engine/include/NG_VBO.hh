@@ -8,15 +8,22 @@ using std::vector;
 #include "NG_GL.hh"
 
 namespace NG{
+	enum vbo_input_filetype_t{
+		OBJ_FILE,
+		DAT_FILE
+	};
+
+
   class VBO{
   public:
-    VBO(const char* obj_path);
+    VBO(const char* file_path, vbo_input_filetype_t type);
     ~VBO();
     void BindBuffers();
     void UnbindBuffers();
     void Draw();
   private:
     void AssimpLoader(const char* obj_path);
+		void DatLoader(const char* obj_path);
 
     vector<glm::vec3> m_vertices;
     vector<glm::vec2> m_uvs;

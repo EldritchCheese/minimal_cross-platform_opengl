@@ -42,7 +42,7 @@ int main(){
 	glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),-3.14159f/2.0f,glm::vec3(0,0,1));
 	glm::mat4 model = rotateZ * rotateX;
 	auto suzanne_texture = std::make_shared<NG::Texture>("textures/first_model.dds");
-  auto suzanne_vbo = std::make_shared<NG::VBO>("models/first_model.obj");
+  auto suzanne_vbo = std::make_shared<NG::VBO>("models/first_model.dat", NG::DAT_FILE);
 	NG::StaticDrawable suzanne(suzanne_vbo, suzanne_texture, model);
 
 

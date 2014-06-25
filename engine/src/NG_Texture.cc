@@ -9,8 +9,8 @@
 
 NG::Texture::Texture(const char* path){
   m_id = SOIL_load_OGL_texture(path, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
-			       SOIL_FLAG_DDS_LOAD_DIRECT);
-  //SOIL_FLAG_INVERT_Y);
+															 //			       SOIL_FLAG_DDS_LOAD_DIRECT);
+															 SOIL_FLAG_INVERT_Y);
 }
 
 NG::Texture::~Texture(){

@@ -31,7 +31,7 @@ def model_emitter(target, source, env):
     #Correct target
     path, name = os.path.split(str(target[0]))
     basename, ext = os.path.splitext(name)
-    ext = '.obj'
+    ext = '.dat'
     path = path.replace('raw_models','models')
     target = os.path.join(path,name+ext)
     #export script as dependency
