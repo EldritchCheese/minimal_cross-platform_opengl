@@ -2,37 +2,37 @@
 #define _NG_VBO_H_
 
 #include <vector>
-using std::vector;
+#include <fstream>
+
 #include <glm/glm.hpp>
 
 #include "NG_GL.hh"
 
 namespace NG{
-	enum vbo_input_filetype_t{
-		#ifdef USE_ASSIMP_LIBRARY
-		OBJ_FILE,
-		#endif
-		DAT_FILE
-	};
-
-
   class VBO{
   public:
-    VBO(const char* file_path, vbo_input_filetype_t type);
+    VBO(const char* file_path);
+		VBO(std::ifstream& infile);
+		VBO(std::vector<glm::vec3> vertices,
+				std::vector<glm::vec2> uvs,
+				std::vector<glm::vec3> normals,
+				std::vector<unsigned short> indices);
     ~VBO();
     void BindBuffers();
     void UnbindBuffers();
     void Draw();
-  private:
-		#ifdef USE_ASSIMP_LIBRARY
-    void AssimpLoader(const char* obj_path);
-		#endif
-		void DatLoader(const char* obj_path);
 
-    vector<glm::vec3> m_vertices;
-    vector<glm::vec2> m_uvs;
-    vector<glm::vec3> m_normals;
-    vector<unsigned short> m_indices;
+		const std::vector<glm::vec3>& GetVertices(){return m_vertices;}
+		const std::vector<glm::vec2>& GetUVs(){return m_uvs;}
+		const std::vector<glm::vec3>& GetNormals(){return m_normals;}
+		const std::vector<unsigned short>& GetIndices(){return m_indices;}
+  private:
+		void init(std::ifstream& infile);
+
+		std::vector<glm::vec3> m_vertices;
+    std::vector<glm::vec2> m_uvs;
+    std::vector<glm::vec3> m_normals;
+    std::vector<unsigned short> m_indices;
 
     bool m_buffers_bound;
     GLuint m_vertexbuffer, m_uvbuffer, m_normalbuffer, m_elementbuffer;

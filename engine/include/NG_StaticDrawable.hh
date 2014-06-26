@@ -4,6 +4,8 @@
 #include <memory>
 
 #include "NG_Drawable.hh"
+#include "NG_Texture.hh"
+#include "NG_VBO.hh"
 
 namespace NG {
 	class StaticDrawable : public Drawable{

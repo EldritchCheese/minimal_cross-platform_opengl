@@ -15,9 +15,11 @@ using std::vector;
 #include "NG_Window.hh"
 #include "NG_Shader.hh"
 #include "NG_VBO.hh"
+#include "NG_VBOKeyframe.hh"
 #include "NG_Texture.hh"
 #include "NG_Text2D.hh"
 #include "NG_StaticDrawable.hh"
+#include "NG_KeyframeDrawable.hh"
 
 int main(){
   cout << "Starting" << endl;
@@ -42,8 +44,10 @@ int main(){
 	glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),-3.14159f/2.0f,glm::vec3(0,0,1));
 	glm::mat4 model = rotateZ * rotateX;
 	auto suzanne_texture = std::make_shared<NG::Texture>("textures/first_model.dds");
-  auto suzanne_vbo = std::make_shared<NG::VBO>("models/first_model.dat", NG::DAT_FILE);
-	NG::StaticDrawable suzanne(suzanne_vbo, suzanne_texture, model);
+  // auto suzanne_vbo = std::make_shared<NG::VBO>("models/first_model.dat");
+	// NG::StaticDrawable suzanne(suzanne_vbo, suzanne_texture, model);
+  auto suzanne_vbo = std::make_shared<NG::VBOKeyframe>("models/first_animation.dat");
+	NG::KeyframeDrawable suzanne(suzanne_vbo, suzanne_texture, model);
 
 
   double lastTime = glfwGetTime();
@@ -52,9 +56,9 @@ int main(){
 
   do{
 
-    double currentTime = glfwGetTime();
+    double time = glfwGetTime();
     nbFrames++;
-    if(currentTime - lastTime >= 1.0){
+    if(time - lastTime >= 1.0){
       ms_per_frame = 1000.0/double(nbFrames);
       printf("%f ms/frame\n", ms_per_frame);
       nbFrames = 0;
@@ -64,9 +68,8 @@ int main(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     standard_shading.Activate();
-    double time = glfwGetTime();
     double theta = 2*3.14159*time/(3.0);
-    glm::vec3 lightPos = glm::vec3(4*cos(theta),4*sin(theta),4);
+    glm::vec3 lightPos = glm::vec3(10*cos(theta),10*sin(theta),10);
     standard_shading.LoadUniform("LightPosition_worldspace",lightPos);
 
     computeMatricesFromInputs(window);
@@ -74,6 +77,8 @@ int main(){
     glm::mat4 view = getViewMatrix();
 		NG::Camera camera(view,projection);
 
+		suzanne.m_coefficients[0] = 1+cos(2*theta);
+		suzanne.m_coefficients[1] = 1-cos(2*theta);
 		suzanne.Draw(standard_shading, camera);
 
     //Text overlay

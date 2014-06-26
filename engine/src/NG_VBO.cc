@@ -6,47 +6,36 @@
 #include <tuple>
 #include <vector>
 #include <map>
-#include <iostream>
-#include <fstream>
 #include <cstdint>
-using namespace std;
 
-#ifdef USE_ASSIMP_LIBRARY
-  #include <assimp/Importer.hpp>
-  #include <assimp/scene.h>
-  #include <assimp/postprocess.h>
-#endif
+#include "NG_BinaryUtils.hh"
 
-NG::VBO::VBO(const char* file_path, vbo_input_filetype_t type){
-  m_buffers_bound = false;
-
-	switch(type){
-		#ifdef USE_ASSIMP_LIBRARY
-	case OBJ_FILE:
-		AssimpLoader(file_path);
-		break;
-		#endif
-	case DAT_FILE:
-		DatLoader(file_path);
-		break;
-	default:
-		throw std::runtime_error("Unknown file type");
-		break;
-	}
+NG::VBO::VBO(const char* file_path){
+  std::ifstream infile(file_path, std::ios::in | std::ios::binary);
+	init(infile);
 }
 
-namespace {
-	template<typename T>
-	void binary_read(ifstream& file, T* location, long length){
-		file.read((char*)location, sizeof(T) * length);
-	}
+NG::VBO::VBO(std::ifstream& infile){
+	init(infile);
 }
 
-void NG::VBO::DatLoader(const char* file_path){
-	ifstream infile(file_path, ios::in | ios::binary);
+
+NG::VBO::VBO(std::vector<glm::vec3> vertices,
+						 std::vector<glm::vec2> uvs,
+						 std::vector<glm::vec3> normals,
+						 std::vector<unsigned short> indices){
+	m_buffers_bound = false;
+
+	m_vertices = vertices;
+	m_uvs = uvs;
+	m_normals = normals;
+	m_indices = indices;
+}
+
+void NG::VBO::init(std::ifstream& infile){
+	m_buffers_bound = false;
 
 	uint16_t vertex_length;
-	cout << "vertex length " << vertex_length << endl;
 	binary_read(infile, &vertex_length, 1);
 	m_vertices.resize(vertex_length);
 	m_uvs.resize(vertex_length);
@@ -57,51 +46,11 @@ void NG::VBO::DatLoader(const char* file_path){
 	binary_read(infile, m_normals.data(), vertex_length);
 
 	uint16_t index_length;
-	cout << "index length " << index_length << endl;
 	binary_read(infile, &index_length, 1);
 	m_indices.resize(index_length);
 
 	binary_read(infile, m_indices.data(), index_length);
 }
-
-#ifdef USE_ASSIMP_LIBRARY
-void NG::VBO::AssimpLoader(const char* obj_path){
-  Assimp::Importer importer;
-  // scene is owned by importer
-  const aiScene* scene = importer.ReadFile(obj_path, 0);
-  if(!scene){
-    std::stringstream ss;
-    ss << "Could not read " << obj_path;
-    throw std::runtime_error(ss.str());
-  }
-  const aiMesh* mesh = scene->mMeshes[0];
-
-  m_vertices.reserve(mesh->mNumVertices);
-  for(unsigned int i=0; i<mesh->mNumVertices; i++){
-    auto pos = mesh->mVertices[i];
-    m_vertices.push_back(glm::vec3(pos.x, pos.y, pos.z));
-  }
-
-  m_uvs.reserve(mesh->mNumVertices);
-  for(unsigned int i=0; i<mesh->mNumVertices; i++){
-    auto uvw = mesh->mTextureCoords[0][i];
-    m_uvs.push_back(glm::vec2(uvw.x, -uvw.y));
-  }
-
-  m_normals.reserve(mesh->mNumVertices);
-  for(unsigned int i=0; i<mesh->mNumVertices; i++){
-    auto norm = mesh->mNormals[i];
-    m_normals.push_back(glm::vec3(norm.x, norm.y, norm.z));
-  }
-
-  m_indices.reserve(3*mesh->mNumFaces);
-  for(unsigned int i=0; i<mesh->mNumFaces; i++){
-    m_indices.push_back(mesh->mFaces[i].mIndices[0]);
-    m_indices.push_back(mesh->mFaces[i].mIndices[1]);
-    m_indices.push_back(mesh->mFaces[i].mIndices[2]);
-  }
-}
-#endif
 
 NG::VBO::~VBO(){
   UnbindBuffers();
