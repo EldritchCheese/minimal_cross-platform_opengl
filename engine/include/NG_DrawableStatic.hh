@@ -1,5 +1,5 @@
-#ifndef _NG_STATICDRAWABLE_H_
-#define _NG_STATICDRAWABLE_H_
+#ifndef _NG_DRAWABLESTATIC_H_
+#define _NG_DRAWABLESTATIC_H_
 
 #include <memory>
 
@@ -8,9 +8,9 @@
 #include "NG_VBO.hh"
 
 namespace NG {
-	class StaticDrawable : public Drawable{
+	class DrawableStatic : public Drawable{
 	public:
-		StaticDrawable(std::shared_ptr<NG::VBO> model,
+		DrawableStatic(std::shared_ptr<NG::VBO> model,
 									 std::shared_ptr<NG::Texture> texture,
 									 glm::mat4 model_matrix);
 
@@ -25,4 +25,4 @@ namespace NG {
 	};
 }
 
-#endif /* _NG_STATICDRAWABLE_H_ */
+#endif /* _NG_DRAWABLESTATIC_H_ */

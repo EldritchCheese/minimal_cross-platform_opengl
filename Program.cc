@@ -18,8 +18,8 @@ using std::vector;
 #include "NG_VBOKeyframe.hh"
 #include "NG_Texture.hh"
 #include "NG_Text2D.hh"
-#include "NG_StaticDrawable.hh"
-#include "NG_KeyframeDrawable.hh"
+#include "NG_DrawableStatic.hh"
+#include "NG_DrawableKeyframe.hh"
 
 int main(){
   cout << "Starting" << endl;
@@ -45,9 +45,9 @@ int main(){
 	glm::mat4 model = rotateZ * rotateX;
 	auto suzanne_texture = std::make_shared<NG::Texture>("textures/first_model.dds");
   // auto suzanne_vbo = std::make_shared<NG::VBO>("models/first_model.dat");
-	// NG::StaticDrawable suzanne(suzanne_vbo, suzanne_texture, model);
+	// NG::DrawableStatic suzanne(suzanne_vbo, suzanne_texture, model);
   auto suzanne_vbo = std::make_shared<NG::VBOKeyframe>("models/first_animation.dat");
-	NG::KeyframeDrawable suzanne(suzanne_vbo, suzanne_texture, model);
+	NG::DrawableKeyframe suzanne(suzanne_vbo, suzanne_texture, model);
 
 
   double lastTime = glfwGetTime();

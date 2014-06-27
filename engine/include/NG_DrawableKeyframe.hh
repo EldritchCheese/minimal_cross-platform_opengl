@@ -1,5 +1,5 @@
-#ifndef _NG_KEYFRAMEDRAWABLE_H_
-#define _NG_KEYFRAMEDRAWABLE_H_
+#ifndef _NG_DRAWABLEKEYFRAME_H_
+#define _NG_DRAWABLEKEYFRAME_H_
 
 #include <memory>
 #include <vector>
@@ -12,9 +12,9 @@
 #include "NG_Texture.hh"
 
 namespace NG {
-	class KeyframeDrawable : public Drawable{
+	class DrawableKeyframe : public Drawable{
 	public:
-		KeyframeDrawable(std::shared_ptr<NG::VBOKeyframe> model,
+		DrawableKeyframe(std::shared_ptr<NG::VBOKeyframe> model,
 										 std::shared_ptr<NG::Texture> texture,
 										 glm::mat4 model_matrix);
 
@@ -30,4 +30,4 @@ namespace NG {
 	};
 }
 
-#endif /* _NG_KEYFRAMEDRAWABLE_H_ */
+#endif /* _NG_DRAWABLEKEYFRAME_H_ */
