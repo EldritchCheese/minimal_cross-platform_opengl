@@ -49,7 +49,15 @@ void NG::VBO::init(std::ifstream& infile){
 	binary_read(infile, &index_length, 1);
 	m_indices.resize(index_length);
 
+	if(index_length % 3){
+		throw std::runtime_error("VBO must have 3*n vertices");
+	}
+
 	binary_read(infile, m_indices.data(), index_length);
+
+	if(infile.fail()){
+		throw std::runtime_error("VBO file ended prematurely");
+	}
 }
 
 NG::VBO::~VBO(){

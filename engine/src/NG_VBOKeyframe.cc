@@ -18,8 +18,20 @@ NG::VBOKeyframe::VBOKeyframe(std::ifstream& infile){
 void NG::VBOKeyframe::init(std::ifstream& infile){
 	uint16_t numframes;
 	binary_read(infile, &numframes, 1);
+
+	if(!numframes){
+		throw std::runtime_error("VBOKeyframe must have at least one keyframe");
+	}
+
 	for(unsigned int i=0; i<numframes; i++){
 		m_keyframes.push_back(std::make_shared<NG::VBO>(infile));
+	}
+
+	unsigned int num_indices = m_keyframes[0]->GetIndices().size();
+	for(auto vbo : m_keyframes){
+		if(m_keyframes[0]->GetIndices().size() != num_indices){
+			throw std::runtime_error("Keyframes in VBO must all have same indices");
+		}
 	}
 }
 
