@@ -21,15 +21,23 @@ namespace NG{
     void CenterCursor();
     bool IsKeyPressed(int key);
     glm::vec2 GetCursorPos();
-
     glm::vec2 GetCenter();
-
     bool ShouldClose();
+
+		void ScrollCallback(double xoffset, double yoffset);
+		glm::vec2 GetScrollDistance();
+		void ResetScrollDistance();
+
+		void FocusCallback(int focused);
+		bool IsFocused();
   private:
     int m_width;
     int m_height;
     const char* m_name;
     GLFWwindow* m_window;
+
+		glm::vec2 m_scrolled;
+		bool m_focused;
 
     std::shared_ptr<NG::GLFW> m_glfw;
     std::shared_ptr<NG::GLEW> m_glew;

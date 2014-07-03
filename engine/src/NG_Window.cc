@@ -1,10 +1,33 @@
 #include "NG_Window.hh"
 
 #include <stdexcept>
+#include <map>
 
 namespace {
-	static std::weak_ptr<NG::GLFW> s_glfw;
-	static std::weak_ptr<NG::GLEW> s_glew;
+	std::weak_ptr<NG::GLFW> s_glfw;
+	std::weak_ptr<NG::GLEW> s_glew;
+
+	std::map<GLFWwindow*, NG::Window* > s_window_map;
+
+	void glfw_scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+		NG::Window* ng_window;
+		try{
+			ng_window = s_window_map.at(window);
+		} catch(std::out_of_range e){
+			return;
+		}
+		ng_window->ScrollCallback(xoffset,yoffset);
+	}
+
+	void glfw_focus_callback(GLFWwindow* window, int focused){
+		NG::Window* ng_window;
+		try{
+			ng_window = s_window_map.at(window);
+		} catch(std::out_of_range e){
+			return;
+		}
+		ng_window->FocusCallback(focused);
+	}
 }
 
 NG::Window::Window(int width, int height, const char* name, GLFWmonitor* monitor, GLFWwindow* share){
@@ -24,9 +47,14 @@ NG::Window::Window(int width, int height, const char* name, GLFWmonitor* monitor
     Activate();
     s_glew = m_glew = std::make_shared<NG::GLEW>();
   }
+
+	s_window_map[m_window] = this;
+	glfwSetScrollCallback(m_window, glfw_scroll_callback);
+	glfwSetWindowFocusCallback(m_window, glfw_focus_callback);
 }
 
 NG::Window::~Window(){
+	s_window_map.erase(m_window);
   glfwDestroyWindow(m_window);
 }
 
@@ -66,4 +94,24 @@ bool NG::Window::ShouldClose(){
 
 bool NG::Window::IsKeyPressed(int key){
   return glfwGetKey(m_window, key) == GLFW_PRESS;
+}
+
+void NG::Window::ScrollCallback(double xoffset, double yoffset){
+	m_scrolled += glm::vec2(xoffset,yoffset);
+}
+
+glm::vec2 NG::Window::GetScrollDistance(){
+	return m_scrolled;
+}
+
+void NG::Window::ResetScrollDistance(){
+	m_scrolled = glm::vec2(0,0);
+}
+
+void NG::Window::FocusCallback(int focused){
+	m_focused = focused;
+}
+
+bool NG::Window::IsFocused(){
+	return m_focused;
 }

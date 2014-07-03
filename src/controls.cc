@@ -26,16 +26,18 @@ void computeMatricesFromInputs(NG::Window& window){
   double currentTime = glfwGetTime();
   float deltaTime = float(currentTime - lastTime);
 
-  auto cursor = window.GetCursorPos() - window.GetCenter();
-  window.CenterCursor();
+	if(window.IsFocused()){
+		auto cursor = window.GetCursorPos() - window.GetCenter();
+		window.CenterCursor();
 
-  phi   -= mouseSpeed * float(cursor.x);
-  theta += mouseSpeed * float(cursor.y);
-  if(theta<0){
-    theta = 0;
-  } else if (theta>3.14f){
-    theta = 3.14f;
-  }
+		phi   -= mouseSpeed * float(cursor.x);
+		theta += mouseSpeed * float(cursor.y);
+		if(theta<0){
+			theta = 0;
+		} else if (theta>3.14f){
+			theta = 3.14f;
+		}
+	}
 
   glm::vec3 direction(sin(theta) * cos(phi),
 		      sin(theta) * sin(phi),
