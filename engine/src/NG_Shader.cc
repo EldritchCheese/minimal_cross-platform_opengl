@@ -26,10 +26,13 @@ NG::ShaderProgram::ShaderProgram(const char* vertex_file_path, const char* fragm
   int infoLogLength;
   glGetProgramiv(m_id, GL_LINK_STATUS, &result);
   glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &infoLogLength);
-  if ( infoLogLength > 0 ){
+  if ( infoLogLength > 1 ){
+		std::stringstream ss;
     std::vector<char> error_message(infoLogLength+1);
     glGetProgramInfoLog(m_id, infoLogLength, NULL, &error_message[0]);
-    throw std::runtime_error(error_message.data());
+		ss << "Error linking shader:\n"
+			 << error_message.data();
+    throw std::runtime_error(ss.str());
   }
 }
 
@@ -113,10 +116,13 @@ NG::Shader::Shader(const char* file_path, GLuint shader_type){
   glGetShaderiv(m_id, GL_COMPILE_STATUS, &result);
   int infoLogLength;
   glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &infoLogLength);
-  if ( infoLogLength > 0 ){
+  if ( infoLogLength > 1 ){
+		std::stringstream ss;
     std::vector<char> error_message(infoLogLength+1);
     glGetShaderInfoLog(m_id, infoLogLength, NULL, &error_message[0]);
-    throw std::runtime_error(error_message.data());
+		ss << "Error compiling shader:\n"
+			 << error_message.data();
+    throw std::runtime_error(ss.str());
   }
 
 }
