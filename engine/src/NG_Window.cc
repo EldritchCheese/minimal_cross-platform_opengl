@@ -66,7 +66,7 @@ void NG::Window::SetInputMode(int mode, int value){
   glfwSetInputMode(m_window, mode, value);
 }
 
-glm::vec2 NG::Window::GetCursorPos(){
+glm::vec2 NG::Window::GetCursorPos() const{
   double xpos, ypos;
   glfwGetCursorPos(m_window, &xpos, &ypos);
   return {xpos, ypos};
@@ -80,7 +80,7 @@ void NG::Window::CenterCursor(){
   SetCursorPos(m_width/2, m_height/2);
 }
 
-glm::vec2 NG::Window::GetCenter(){
+glm::vec2 NG::Window::GetCenter() const{
   return {m_width/2, m_height/2};
 }
 
@@ -88,11 +88,11 @@ void NG::Window::SwapBuffers(){
   glfwSwapBuffers(m_window);
 }
 
-bool NG::Window::ShouldClose(){
+bool NG::Window::ShouldClose() const{
   return glfwWindowShouldClose(m_window);
 }
 
-bool NG::Window::IsKeyPressed(int key){
+bool NG::Window::IsKeyPressed(int key) const{
   return glfwGetKey(m_window, key) == GLFW_PRESS;
 }
 
@@ -100,7 +100,7 @@ void NG::Window::ScrollCallback(double xoffset, double yoffset){
 	m_scrolled += glm::vec2(xoffset,yoffset);
 }
 
-glm::vec2 NG::Window::GetScrollDistance(){
+glm::vec2 NG::Window::GetScrollDistance() const{
 	return m_scrolled;
 }
 
@@ -112,6 +112,6 @@ void NG::Window::FocusCallback(int focused){
 	m_focused = focused;
 }
 
-bool NG::Window::IsFocused(){
+bool NG::Window::IsFocused() const{
 	return m_focused;
 }

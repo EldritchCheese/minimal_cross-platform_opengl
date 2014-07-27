@@ -22,10 +22,10 @@ namespace NG{
     void UnbindBuffers();
     void Draw();
 
-		const std::vector<glm::vec3>& GetVertices(){return m_vertices;}
-		const std::vector<glm::vec2>& GetUVs(){return m_uvs;}
-		const std::vector<glm::vec3>& GetNormals(){return m_normals;}
-		const std::vector<unsigned short>& GetIndices(){return m_indices;}
+		const std::vector<glm::vec3>& GetVertices() const {return m_vertices;}
+		const std::vector<glm::vec2>& GetUVs() const {return m_uvs;}
+		const std::vector<glm::vec3>& GetNormals() const {return m_normals;}
+		const std::vector<unsigned short>& GetIndices() const {return m_indices;}
   private:
 		void init(std::ifstream& infile);
 

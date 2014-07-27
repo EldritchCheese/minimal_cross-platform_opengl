@@ -19,17 +19,17 @@ namespace NG{
     void SetInputMode(int mode, int value);
     void SetCursorPos(int x, int y);
     void CenterCursor();
-    bool IsKeyPressed(int key);
-    glm::vec2 GetCursorPos();
-    glm::vec2 GetCenter();
-    bool ShouldClose();
+    bool IsKeyPressed(int key) const;
+    glm::vec2 GetCursorPos() const;
+    glm::vec2 GetCenter() const;
+    bool ShouldClose() const;
 
 		void ScrollCallback(double xoffset, double yoffset);
-		glm::vec2 GetScrollDistance();
+		glm::vec2 GetScrollDistance() const;
 		void ResetScrollDistance();
 
 		void FocusCallback(int focused);
-		bool IsFocused();
+		bool IsFocused() const;
   private:
     int m_width;
     int m_height;

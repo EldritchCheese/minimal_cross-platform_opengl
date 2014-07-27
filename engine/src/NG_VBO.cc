@@ -99,7 +99,7 @@ void NG::VBO::UnbindBuffers(){
   glDeleteBuffers(1, &m_elementbuffer);
 }
 
-void NG::VBO::Draw(){
+void NG::VBO::Draw() {
   BindBuffers();
 
   glEnableVertexAttribArray(0);

@@ -1,6 +1,6 @@
 #include "NG_Drawable.hh"
 
-void NG::Drawable::Draw(NG::ShaderProgram& shaders, NG::Camera& camera){
+void NG::Drawable::Draw(NG::ShaderProgram& shaders, NG::Camera& camera) {
 	shaders.Activate();
 
 	auto model = GetModelMatrix();
