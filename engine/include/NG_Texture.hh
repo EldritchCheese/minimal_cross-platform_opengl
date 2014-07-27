@@ -4,14 +4,14 @@
 #include "NG_GL.hh"
 
 namespace NG {
-  class Texture{
-  public:
-    Texture(const char* path);
-    ~Texture();
-    void Activate(GLenum texture_num);
-  private:
-    GLuint m_id;
-  };
+class Texture {
+public:
+	Texture(const char* path);
+	~Texture();
+	void Activate(GLenum texture_num);
+private:
+	GLuint m_id;
+};
 }
 
 #endif /* _NG_TEXTURE_H_ */

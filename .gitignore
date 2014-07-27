@@ -8,3 +8,4 @@ win32
 win64
 resources/models
 resources/textures
+*.orig

@@ -5,15 +5,15 @@
 #include <GLFW/glfw3.h>
 
 namespace NG {
-  class GLFW {
-  public:
-    GLFW();
-    ~GLFW();
-  };
-  class GLEW {
-  public:
-    GLEW();
-  };
+class GLFW {
+public:
+	GLFW();
+	~GLFW();
+};
+class GLEW {
+public:
+	GLEW();
+};
 }
 
 #endif /* _NG_GL_H_ */
