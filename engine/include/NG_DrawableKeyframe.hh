@@ -21,12 +21,13 @@ public:
 	virtual std::shared_ptr<NG::VBO> GetVBO();
 	virtual std::shared_ptr<NG::Texture> GetTexture();
 	virtual glm::mat4 GetModelMatrix();
-public:
-	std::vector<double> m_coefficients;
-private:
+	void SetCoefficients(const std::vector<double>& coefficients);
+	double& Coefficient(int index);
+	private:
 	glm::mat4 m_model_matrix;
 	std::shared_ptr<NG::VBOKeyframe> m_model;
 	std::shared_ptr<NG::Texture> m_texture;
+	std::vector<double> m_coefficients;
 };
 }
 

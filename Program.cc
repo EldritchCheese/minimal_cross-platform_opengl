@@ -44,8 +44,6 @@ int main() {
 	glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),-3.14159f/2.0f,glm::vec3(0,0,1));
 	glm::mat4 model = rotateZ * rotateX;
 	auto suzanne_texture = std::make_shared<NG::Texture>("textures/first_model.dds");
-	// auto suzanne_vbo = std::make_shared<NG::VBO>("models/first_model.dat");
-	// NG::DrawableStatic suzanne(suzanne_vbo, suzanne_texture, model);
 	auto suzanne_vbo = std::make_shared<NG::VBOKeyframe>("models/first_animation.dat");
 	NG::DrawableKeyframe suzanne(suzanne_vbo, suzanne_texture, model);
 
@@ -77,8 +75,8 @@ int main() {
 		glm::mat4 view = getViewMatrix();
 		NG::Camera camera(view,projection);
 
-		suzanne.m_coefficients[0] = 1+cos(2*theta);
-		suzanne.m_coefficients[1] = 1-cos(2*theta);
+		suzanne.Coefficient(0) = 1+cos(2*theta);
+		suzanne.Coefficient(1) = 1-cos(2*theta);
 		suzanne.Draw(standard_shading, camera);
 
 		//Text overlay

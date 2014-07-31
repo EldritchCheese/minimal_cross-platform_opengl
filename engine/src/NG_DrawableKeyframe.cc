@@ -1,5 +1,7 @@
 #include "NG_DrawableKeyframe.hh"
 
+#include <stdexcept>
+
 NG::DrawableKeyframe::DrawableKeyframe(std::shared_ptr<NG::VBOKeyframe> model,
                                        std::shared_ptr<NG::Texture> texture,
                                        glm::mat4 model_matrix) {
@@ -21,4 +23,15 @@ std::shared_ptr<NG::Texture> NG::DrawableKeyframe::GetTexture() {
 
 glm::mat4 NG::DrawableKeyframe::GetModelMatrix() {
 	return m_model_matrix;
+}
+
+void NG::DrawableKeyframe::SetCoefficients(const std::vector<double>& coefficients){
+	if (coefficients.size() != m_model->NumKeyframes()){
+		throw std::runtime_error("Incompatible sizes");
+	}
+	m_coefficients = coefficients;
+}
+
+double& NG::DrawableKeyframe::Coefficient(int index){
+	return m_coefficients.at(index);
 }
