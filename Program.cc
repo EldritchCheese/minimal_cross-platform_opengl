@@ -52,6 +52,8 @@ int main() {
 	int nbFrames = 0;
 	double ms_per_frame = 0;
 
+	FPS_View controls;
+
 	do {
 
 		double time = glfwGetTime();
@@ -70,9 +72,9 @@ int main() {
 		glm::vec3 lightPos = glm::vec3(10*cos(theta),10*sin(theta),10);
 		standard_shading.LoadUniform("LightPosition_worldspace",lightPos);
 
-		computeMatricesFromInputs(window);
-		glm::mat4 projection = getProjectionMatrix();
-		glm::mat4 view = getViewMatrix();
+		controls.updateMatrices(window);
+		glm::mat4 projection = controls.getProjMatrix();
+		glm::mat4 view = controls.getViewMatrix();
 		NG::Camera camera(view,projection);
 
 		suzanne.Coefficient(0) = 1+cos(2*theta);

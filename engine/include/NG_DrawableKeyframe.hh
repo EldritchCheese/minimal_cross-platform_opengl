@@ -23,7 +23,7 @@ public:
 	virtual glm::mat4 GetModelMatrix();
 	void SetCoefficients(const std::vector<double>& coefficients);
 	double& Coefficient(int index);
-	private:
+private:
 	glm::mat4 m_model_matrix;
 	std::shared_ptr<NG::VBOKeyframe> m_model;
 	std::shared_ptr<NG::Texture> m_texture;
